@@ -1,13 +1,14 @@
 ﻿using EPayroll_BE.Data;
+using EPayroll_BE.Models.Base;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace EPayroll_BE.Repositories
+namespace EPayroll_BE.Repositories.Base
 {
-    public class RepositoryBase<T> : IRepositoryBase<T> where T : class
+    public class RepositoryBase<T> : IRepositoryBase<T> where T : ModelBase
     {
         protected readonly EPayrollContext context;
         protected readonly DbSet<T> dbSet;
@@ -37,19 +38,19 @@ namespace EPayroll_BE.Repositories
         {
             dbSet.Remove(Get(where).First());
         }
-        public IQueryable<T> GetAll()
+        public IList<T> GetAll()
         {
-            return dbSet;
+            return dbSet.ToList();
         }
 
-        public T GetById(string id)
+        public T GetById(int id)
         {
             return dbSet.Find(id);
         }
 
-        public IQueryable<T> Get(Expression<Func<T, bool>> where)
+        public IList<T> Get(Expression<Func<T, bool>> where)
         {
-            return dbSet.Where(where);
+            return dbSet.Where(where).ToList();
         }
 
         public void SaveChanges()
@@ -61,18 +62,36 @@ namespace EPayroll_BE.Repositories
         {
             dbSet.Update(entity);
         }
+
+        public int Count()
+        {
+            return dbSet.Count();
+        }
+
+        public int Count(Expression<Func<T, bool>> where)
+        {
+            return dbSet.Where(where).Count();
+        }
+
+        public IList<T> TakeLast(int skip, int take)
+        {
+            return dbSet.OrderByDescending(_ => _.Id).Skip(skip).Take(take).ToList();
+        }
     }
 
     public interface IRepositoryBase<T> where T : class
     {
         void Add(T entity);
         void Add(IEnumerable<T> list);
-        IQueryable<T> GetAll();
-        T GetById(string id);
-        IQueryable<T> Get(Expression<Func<T, bool>> where);
+        IList<T> GetAll();
+        T GetById(int id);
+        IList<T> Get(Expression<Func<T, bool>> where);
         void Update(T entity);
         void Delete(T entity);
         void Delete(Expression<Func<T, bool>> where);
+        int Count();
+        int Count(Expression<Func<T, bool>> where);
+        IList<T> TakeLast(int skip, int take);
         void SaveChanges();
     }
 }

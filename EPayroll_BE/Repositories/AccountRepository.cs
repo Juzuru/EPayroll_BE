@@ -1,5 +1,6 @@
 ﻿using EPayroll_BE.Data;
 using EPayroll_BE.Models;
+using EPayroll_BE.Repositories.Base;
 
 namespace EPayroll_BE.Repositories
 {

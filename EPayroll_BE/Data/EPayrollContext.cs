@@ -8,6 +8,19 @@ namespace EPayroll_BE.Data
         public EPayrollContext(DbContextOptions<EPayrollContext> option) : base(option) { }
 
         public virtual DbSet<Account> Account { get; set; }
+        public virtual DbSet<Employee> Employee { get; set; }
+        public virtual DbSet<PayItem> PayItem { get; set; }
+        public virtual DbSet<PayPeriod> PayPeriod { get; set; }
+        public virtual DbSet<PaySlip> PaySlip { get; set; }
+        public virtual DbSet<PayType> PayType { get; set; }
+        public virtual DbSet<PayTypeAmount> PayTypeAmount { get; set; }
+        public virtual DbSet<PayTypeCategory> PayTypeCategory { get; set; }
+        public virtual DbSet<Position> Position { get; set; }
+        public virtual DbSet<SalaryLevel> SalaryLevel { get; set; }
+        public virtual DbSet<SalaryMode> SalaryMode { get; set; }
+        public virtual DbSet<SalarySheet> SalarySheet { get; set; }
+        public virtual DbSet<SalaryTable> SalaryTable { get; set; }
+        public virtual DbSet<SalaryTablePosition> SalaryTablePosition { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

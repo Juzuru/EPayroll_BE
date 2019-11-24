@@ -1,0 +1,22 @@
+﻿using EPayroll_BE.Models.Base;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace EPayroll_BE.Models
+{
+    public class PayTypeAmount : ModelBase
+    {
+        public float Amount { get; set; }
+
+        public int SalaryLevelId { get; set; }
+        public int PayTypeId { get; set; }
+
+        [ForeignKey("SalaryLevelId")]
+        public SalaryLevel SalaryLevel { get; set; }
+        [ForeignKey("PayTypeId")]
+        public PayType PayType { get; set; }
+    }
+}

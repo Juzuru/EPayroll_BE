@@ -1,12 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EPayroll_BE.Models.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace EPayroll_BE.Models
 {
-    public class Account
+    public class Account : ModelBase
     {
-        [Key]
-        public string EmployeeId { get; set; }
+        [Required]
+        public string EmployeeCode { get; set; }
+        [Required]
         public string Password { get; set; }
+        [Required]
         public bool IsRemove { get; set; }
     }
 }

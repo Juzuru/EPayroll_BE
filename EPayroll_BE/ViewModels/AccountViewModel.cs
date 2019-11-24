@@ -1,30 +1,41 @@
-﻿namespace EPayroll_BE.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace EPayroll_BE.ViewModels
 {
     public class AccountViewModel
     {
-        public string EmployeeId { get; set; }
+        public int Id { get; set; }
+        public string EmployeeCode { get; set; }
         public bool IsRemove { get; set; }
     }
 
     public class AccountCreateModel
     {
-        public string EmployeeId { get; set; }
+        [Required]
+        public string EmployeeCode { get; set; }
+        [Required]
+        public string Password { get; set; }
     }
 
-    public class AccountUpdateModel
+    public class AccountChangePasswordModel
     {
-        public string EmployeeId { get; set; }
-        public string Password { get; set; }
+        [Required]
+        public string OldPassword { get; set; }
+        [Required]
+        public string NewPassword { get; set; }
     }
 
     public class AccountDeleteModel
     {
-        public string EmployeeId { get; set; }
+        [Required]
+        public int Id { get; set; }
     }
 
     public class AccountLoginModel
     {
-        public string EmployeeId { get; set; }
+        [Required]
+        public string EmployeeCode { get; set; }
+        [Required]
         public string Password { get; set; }
     }
 
