@@ -54,6 +54,19 @@ namespace EPayroll_BE
             
             #region Add Services
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IPayItemRepository, PayItemRepository>();
+            services.AddScoped<IPayPeriodRepository, PayPeriodRepository>();
+            services.AddScoped<IPaySlipRepository, PaySlipRepository>();
+            services.AddScoped<IPayTypeAmountRepository, PayTypeAmountRepository>();
+            services.AddScoped<IPayTypeCategoryRepository, PayTypeCategoryRepository>();
+            services.AddScoped<IPayTypeRepository, PayTypeRepository>();
+            services.AddScoped<IPositionRepository, PositionRepository>();
+            services.AddScoped<ISalaryLevelRepository, SalaryLevelRepository>();
+            services.AddScoped<ISalaryModeRepository, SalaryModeRepository>();
+            services.AddScoped<ISalarySheetRepository, SalarySheetRepository>();
+            services.AddScoped<ISalaryTablePositionRepository, SalaryTablePositionRepository>();
+            services.AddScoped<ISalaryTableRepository, SalaryTableRepository>();
             #endregion
 
             services.AddSwaggerDocument(c =>

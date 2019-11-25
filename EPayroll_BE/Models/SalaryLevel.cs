@@ -11,6 +11,7 @@ namespace EPayroll_BE.Models
     {
         public string Level { get; set; }
         public int Order { get; set; }
+        public float Factor { get; set; }
         public string Condition { get; set; }
 
         public int SalaryTableId { get; set; }

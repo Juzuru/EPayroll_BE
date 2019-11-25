@@ -15,13 +15,10 @@ namespace EPayroll_BE.Models
         public bool Gender { get; set; }
         public string IdentifyNumber { get; set; }
 
-        public int AccountId { get; set; }
         public int PositionId { get; set; }
         public int SalaryModeId { get; set; }
         public int SalaryLevelId { get; set; }
 
-        [ForeignKey("AccountId")]
-        public Account Account { get; set; }
         [ForeignKey("PositionId")]
         public Position Position { get; set; }
         [ForeignKey("SalaryModeId")]

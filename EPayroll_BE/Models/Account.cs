@@ -1,5 +1,6 @@
 ﻿using EPayroll_BE.Models.Base;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EPayroll_BE.Models
 {
@@ -11,5 +12,10 @@ namespace EPayroll_BE.Models
         public string Password { get; set; }
         [Required]
         public bool IsRemove { get; set; }
+
+        public int EmployeeId { get; set; }
+
+        [ForeignKey("EmployeeId")]
+        public Employee Employee { get; set; }
     }
 }

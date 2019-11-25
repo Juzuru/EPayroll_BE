@@ -11,7 +11,6 @@ namespace EPayroll_BE.Models
     {
         public string Name { get; set; }
         public int TotalWorking { get; set; }
-        public int TotalOverTimeWorking { get; set; }
         public float WorkingRate { get; set; }
         public float Amount { get; set; }
 

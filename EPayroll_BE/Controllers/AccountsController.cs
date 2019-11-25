@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using NSwag;
+using NSwag.Annotations;
 
 namespace EPayroll_BE.Controllers
 {
@@ -33,8 +34,8 @@ namespace EPayroll_BE.Controllers
 
         #region Get
         [HttpGet]
-        [ProducesResponseType(200, StatusCode = 200, Type = typeof(PagingModel<AccountViewModel>))]
-        [ProducesResponseType(400, StatusCode = 400, Type = typeof(string))]
+        [SwaggerResponse(200, typeof(PagingModel<AccountViewModel>), Description = "Return a list of 10 newest accounts")]
+        [SwaggerResponse(500, null,  Description = "Server error")]
         public ActionResult Get([FromQuery]int page = 1)
         {
             try
@@ -56,12 +57,12 @@ namespace EPayroll_BE.Controllers
                     RequestedPage = page,
                     ItemCount = listModel.Count,
                     ItemList = listModel,
-                    TotalPage = _accountRepository.Count()/10
+                    TotalPage = _accountRepository.Count() / itemPerPage
                 });
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e);
+                return StatusCode(500);
             }
         }
 
@@ -96,22 +97,7 @@ namespace EPayroll_BE.Controllers
         [HttpPost("create")]
         public ActionResult Create([FromBody]AccountCreateModel model)
         {
-            try
-            {
-                _accountRepository.Add(new Account
-                {
-                    EmployeeCode = model.EmployeeCode,
-                    Password = model.Password,
-                    IsRemove = false
-                });
-                _accountRepository.SaveChanges();
-
-                return StatusCode(201);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e);
-            }
+            return StatusCode(501);
         }
 
         [HttpPost("login")]
@@ -127,6 +113,7 @@ namespace EPayroll_BE.Controllers
 
                 return Ok(new AccountAuthorizedModel
                 {
+                    EmployeeId = account.EmployeeId,
                     Token = JWTUtilities.GenerateJwtToken(account.EmployeeCode, new Claim[] {
                         new Claim("EmployeeCode", account.EmployeeCode)
                     })

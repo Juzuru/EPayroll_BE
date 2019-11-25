@@ -10,6 +10,7 @@ namespace EPayroll_BE.Models
     public class PaySlip : ModelBase
     {
         public string Name { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         public int PayPeriodId { get; set; }
         public int EmployeeId { get; set; }

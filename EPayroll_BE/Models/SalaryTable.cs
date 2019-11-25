@@ -13,6 +13,7 @@ namespace EPayroll_BE.Models
         public DateTime CreatedDate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public bool IsEnable { get; set; }
 
         //public int SalaryModeId { get; set; }
 

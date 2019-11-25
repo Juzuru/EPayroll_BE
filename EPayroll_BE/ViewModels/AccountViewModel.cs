@@ -41,10 +41,7 @@ namespace EPayroll_BE.ViewModels
 
     public class AccountAuthorizedModel
     {
-        public string Name { get; set; }
-        public string ImageUrl { get; set; }
-        public string RoleId { get; set; }
-        public string RoleName { get; set; }
+        public int EmployeeId { get; set; }
         public string Token { get; set; }
     }
 }
