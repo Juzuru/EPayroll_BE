@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace EPayroll_BE.ViewModels
 {
-    public class PayItemViewModel
+    public class SalaryTableViewModel
     {
     }
 
-    public class PayItemCreateModel
+    public class SalaryTableCreateModel
     {
         [Required]
-        public float Amount { get; set; }
+        public string Name { get; set; }
         [Required]
-        public Guid PaySlipId { get; set; }
+        public DateTime StartDate { get; set; }
         [Required]
-        public Guid PayTypeId { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

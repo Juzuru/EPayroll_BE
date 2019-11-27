@@ -14,7 +14,7 @@ namespace EPayroll_BE.Models
         public float Factor { get; set; }
         public string Condition { get; set; }
 
-        public int SalaryTableId { get; set; }
+        public Guid SalaryTableId { get; set; }
 
         [ForeignKey("SalaryTableId")]
         public SalaryTable SalaryTable { get; set; }

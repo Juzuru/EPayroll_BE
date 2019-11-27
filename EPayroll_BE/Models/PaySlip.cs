@@ -9,11 +9,12 @@ namespace EPayroll_BE.Models
 {
     public class PaySlip : ModelBase
     {
-        public string Name { get; set; }
+        public string PaySlipCode { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string Status { get; set; }
 
-        public int PayPeriodId { get; set; }
-        public int EmployeeId { get; set; }
+        public Guid PayPeriodId { get; set; }
+        public Guid EmployeeId { get; set; }
 
         [ForeignKey("PayPeriodId")]
         public PayPeriod PayPeriod { get; set; }

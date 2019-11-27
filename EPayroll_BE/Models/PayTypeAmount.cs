@@ -11,8 +11,8 @@ namespace EPayroll_BE.Models
     {
         public float Amount { get; set; }
 
-        public int SalaryLevelId { get; set; }
-        public int PayTypeId { get; set; }
+        public Guid SalaryLevelId { get; set; }
+        public Guid PayTypeId { get; set; }
 
         [ForeignKey("SalaryLevelId")]
         public SalaryLevel SalaryLevel { get; set; }

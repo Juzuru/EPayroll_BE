@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NSwag.Annotations;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace EPayroll_BE.ViewModels
 {
     public class AccountViewModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string EmployeeCode { get; set; }
         public bool IsRemove { get; set; }
     }
@@ -23,12 +25,8 @@ namespace EPayroll_BE.ViewModels
         public string OldPassword { get; set; }
         [Required]
         public string NewPassword { get; set; }
-    }
-
-    public class AccountDeleteModel
-    {
         [Required]
-        public int Id { get; set; }
+        public string ConfirmNewPassword { get; set; }
     }
 
     public class AccountLoginModel
@@ -41,7 +39,7 @@ namespace EPayroll_BE.ViewModels
 
     public class AccountAuthorizedModel
     {
-        public int EmployeeId { get; set; }
+        public string TokenType { get; set; }
         public string Token { get; set; }
     }
 }

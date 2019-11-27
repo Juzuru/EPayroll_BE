@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,13 +8,13 @@ namespace EPayroll_BE.ViewModels
 {
     public class EmployeeViewModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 
     public class EmployeeDetailViewModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public int Age { get; set; }
         public bool Gender { get; set; }
@@ -26,15 +27,20 @@ namespace EPayroll_BE.ViewModels
 
     public class EmployeeCreateModel
     {
+        [Required]
         public string Name { get; set; }
+        [Required]
         public int Age { get; set; }
+        [Required]
         public bool Gender { get; set; }
+        [Required]
         public string IdentifyNumber { get; set; }
 
-        public int PositionId { get; set; }
-        public int SalaryModeId { get; set; }
-        public int SalaryLevelId { get; set; }
-
-        public AccountCreateModel Account { get; set; }
+        [Required]
+        public Guid PositionId { get; set; }
+        [Required]
+        public Guid SalaryModeId { get; set; }
+        [Required]
+        public Guid SalaryLevelId { get; set; }
     }
 }

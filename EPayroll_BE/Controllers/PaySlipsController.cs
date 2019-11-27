@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EPayroll_BE.Repositories;
+using EPayroll_BE.Services;
+using EPayroll_BE.ViewModels;
+using EPayroll_BE.ViewModels.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NSwag.Annotations;
 
 namespace EPayroll_BE.Controllers
 {
@@ -12,11 +15,55 @@ namespace EPayroll_BE.Controllers
     [ApiController]
     public class PaySlipsController : ControllerBase
     {
-        private readonly IPaySlipRepository _paySlipRepository;
+        private readonly IPaySlipService _paySlipService;
 
-        public PaySlipsController(IPaySlipRepository paySlipRepository)
+        public PaySlipsController(IPaySlipService paySlipService)
         {
-            _paySlipRepository = paySlipRepository;
+            _paySlipService = paySlipService;
         }
+
+        #region Get
+        [HttpGet]
+        [SwaggerResponse(200, typeof(IList<PaySlipViewModel>), Description = "Return all payslip order by created date")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GetAll()
+        {
+            try
+            {
+                return Ok(_paySlipService.GetAll());
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+        #endregion
+
+        #region Post
+        [HttpPost]
+        [SwaggerResponse(201, typeof(string), Description = "Return Id of created paySlip")]
+        [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult Add([FromBody]PaySlipCreateModel model)
+        {
+            try
+            {
+                return StatusCode(201, _paySlipService.Add(model));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+        #endregion
+
+        #region Put
+        #endregion
+
+        #region Patch
+        #endregion
+
+        #region Delete
+        #endregion
     }
 }

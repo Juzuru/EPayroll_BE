@@ -32,15 +32,15 @@ namespace EPayroll_BE.Utilities
             };
         }
 
-        public static string GenerateJwtToken(string employeeId, Claim[] claims)
+        public static string GenerateJwtToken(string accountId, Claim[] claims)
         {
             DateTime datetime = DateTime.Now;
-            validateAudiences.Add(employeeId + "_" + datetime);
+            validateAudiences.Add(accountId + "_" + datetime);
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
             return tokenHandler.WriteToken(tokenHandler.CreateToken(new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Audience = employeeId + "_" + datetime,
+                Audience = accountId + "_" + datetime,
                 Expires = datetime.AddDays(7),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),

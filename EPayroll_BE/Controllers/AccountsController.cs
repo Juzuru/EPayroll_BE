@@ -4,9 +4,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using EPayroll_BE.Models;
-using EPayroll_BE.Repositories;
+using EPayroll_BE.Services;
 using EPayroll_BE.Utilities;
 using EPayroll_BE.ViewModels;
+using EPayroll_BE.ViewModels.Base;
 using EPayroll_BE.ViewModels.Pager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -23,42 +24,58 @@ namespace EPayroll_BE.Controllers
     [Authorize]
     public class AccountsController : ControllerBase
     {
-        private static readonly int itemPerPage = 10;
+        private readonly IAccountService _accountService;
 
-        private readonly IAccountRepository _accountRepository;
-
-        public AccountsController(IAccountRepository accountRepository)
+        public AccountsController(IAccountService accountService)
         {
-            _accountRepository = accountRepository;
+            _accountService = accountService;
         }
 
         #region Get
         [HttpGet]
-        [SwaggerResponse(200, typeof(PagingModel<AccountViewModel>), Description = "Return a list of 10 newest accounts")]
-        [SwaggerResponse(500, null,  Description = "Server error")]
-        public ActionResult Get([FromQuery]int page = 1)
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Get()
+        {
+            return StatusCode(501);
+        }
+        #endregion
+
+        #region Post
+        [HttpPost]
+        [AllowAnonymous]
+        [SwaggerResponse(201, typeof(string), Description = "Return Id of created account")]
+        [SwaggerResponse(400, typeof(AccountCreateErrorModel), Description = "Return an error model")]
+        [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult Add([FromBody]AccountCreateModel model)
         {
             try
             {
-                IList<Account> list = _accountRepository.TakeLast((page-1) * itemPerPage, itemPerPage);
+                AccountCreateErrorModel errors = new AccountCreateErrorModel();
+                bool error = false;
 
-                IList<AccountViewModel> listModel = new List<AccountViewModel>();
-                foreach (Account account in list)
+                if (model.EmployeeCode.Contains(" "))
                 {
-                    listModel.Add(new AccountViewModel
-                    {
-                        Id = account.Id,
-                        EmployeeCode = account.EmployeeCode,
-                        IsRemove = account.IsRemove
-                    });
+                    error = true;
+                    errors.EmployeeCodeError = "EmployeeCode must not have any space";
+                }
+                if (model.Password.Contains(" ")) {
+                    error = true;
+                    errors.EmployeeCodeError = "Password must not have any space";
                 }
 
-                return Ok(new PagingModel<AccountViewModel> {
-                    RequestedPage = page,
-                    ItemCount = listModel.Count,
-                    ItemList = listModel,
-                    TotalPage = _accountRepository.Count() / itemPerPage
-                });
+                if (!error)
+                {
+                    if (_accountService.ContainsEmployeeCode(model.EmployeeCode))
+                    {
+                        errors.EmployeeCodeError = "EmployeeCode existed!!!";
+                    }
+                    else
+                    {
+                        return StatusCode(201, _accountService.Add(model));
+                    }
+                }
+                return BadRequest(errors);
             }
             catch (Exception)
             {
@@ -66,67 +83,39 @@ namespace EPayroll_BE.Controllers
             }
         }
 
-        [HttpGet("{account_id}")]
-        public ActionResult GetById(int account_id)
-        {
-            try
-            {
-                Account account = _accountRepository.GetById(account_id);
-
-                return Ok(new AccountViewModel
-                {
-                    Id = account_id,
-                    EmployeeCode = account.EmployeeCode,
-                    IsRemove = account.IsRemove
-                });
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e);
-            }
-        }
-        #endregion
-
-        #region Post
-        [HttpPost]
-        public ActionResult Post()
-        {
-            return StatusCode(501);
-        }
-
-        [HttpPost("create")]
-        public ActionResult Create([FromBody]AccountCreateModel model)
-        {
-            return StatusCode(501);
-        }
-
-        [HttpPost("login")]
         [AllowAnonymous]
+        [HttpPost("login")]
+        [SwaggerResponse(200, typeof(AccountAuthorizedModel), Description = "Return an authorized model")]
+        [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
+        [SwaggerResponse(401, null, Description = "Unauthorized user")]
+        [SwaggerResponse(500, null, Description = "Server error")]
         public ActionResult Login([FromBody]AccountLoginModel model)
         {
             try
             {
-                Account account = _accountRepository
-                    .Get(_ => _.EmployeeCode.Equals(model.EmployeeCode) && _.Password.Equals(model.Password))
-                    .FirstOrDefault();
-                if (account == null) return Unauthorized();
+                Guid accountId = _accountService.CheckLogin(model);
 
-                return Ok(new AccountAuthorizedModel
+                if (accountId == null) return Unauthorized();
+                else
                 {
-                    EmployeeId = account.EmployeeId,
-                    Token = JWTUtilities.GenerateJwtToken(account.EmployeeCode, new Claim[] {
-                        new Claim("EmployeeCode", account.EmployeeCode)
-                    })
-                });
-
+                    return Ok(new AccountAuthorizedModel
+                    {
+                        TokenType = "Bearer",
+                        Token = JWTUtilities.GenerateJwtToken(accountId.ToString(), new Claim[] {
+                                new Claim("AccountId", accountId.ToString())
+                            })
+                    });
+                }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e);
+                return StatusCode(500);
             }
         }
 
         [HttpPost("logout")]
+        [SwaggerResponse(200, null, Description = "User logged out")]
+        [SwaggerResponse(500, null, Description = "Server error")]
         public ActionResult Logout()
         {
             try
@@ -137,70 +126,86 @@ namespace EPayroll_BE.Controllers
                 }
                 return Ok();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e);
+                return StatusCode(500);
             }
         }
         #endregion
 
         #region Put
         [HttpPut]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
         public ActionResult Update()
         {
             return StatusCode(501);
         }
+        #endregion
 
-        [HttpPut("change_password")]
+        #region Patch
+        [HttpPut("changePassword")]
+        [SwaggerResponse(204, null, Description = "Password changed")]
+        [SwaggerResponse(400, typeof(AccountChangePasswordErrorModel), Description = "Return an error model")]
+        [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
+        [SwaggerResponse(500, null, Description = "Server error")]
         public ActionResult ChangePassword([FromBody]AccountChangePasswordModel model)
         {
             try
             {
-                if (Request.Headers.TryGetValue("Authorization", out StringValues value))
+                AccountChangePasswordErrorModel errors = new AccountChangePasswordErrorModel();
+                bool error = false;
+
+                if (model.OldPassword.Contains(" "))
                 {
-                    string employeeCode = JWTUtilities.GetClaimValueFromToken("EmployeeCode", value.ToString());
-
-                    Account account = _accountRepository
-                        .Get(_ => _.EmployeeCode.Equals(employeeCode) && _.Password.Equals(model.OldPassword))
-                        .FirstOrDefault();
-                    if (account == null) return Unauthorized("Invalid employee's code or password!!!");
-
-                    account.Password = model.NewPassword;
-                    _accountRepository.Update(account);
-                    _accountRepository.SaveChanges();
-
-                    return NoContent();
+                    error = true;
+                    errors.OldPasswordError = "Old password must not have any space";
                 }
-                return Unauthorized("Token is null!!!");
+                if (model.NewPassword.Contains(" "))
+                {
+                    error = true;
+                    errors.NewPasswordError = "New password must have any space";
+                }
+                if (model.ConfirmNewPassword.Contains(" "))
+                {
+                    error = true;
+                    errors.ConfirmNewPasswordError = "Confirm new password must have any space";
+                }
+                if (!model.NewPassword.Equals(model.ConfirmNewPassword))
+                {
+                    error = true;
+                    errors.ConfirmNewPasswordError = "Confirm new password must match the new password";
+                }
+
+                if (!error)
+                {
+                    if (Request.Headers.TryGetValue("Authorization", out StringValues value))
+                    {
+                        string accountId = JWTUtilities.GetClaimValueFromToken("AccountId", value.ToString());
+                        _accountService.ChangePassword(new Guid(accountId), model.NewPassword);
+                        return NoContent();
+                    }
+                    return StatusCode(500);
+                }
+                return BadRequest(errors);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e);
+                return StatusCode(500);
             }
         }
         #endregion
 
         #region Delete
-        [HttpDelete]
-        public ActionResult Delete()
-        {
-            return StatusCode(501);
-        }
-
-        [HttpDelete("{account_id}")]
-        public ActionResult DeleteById(int account_id)
+        [HttpDelete("{accountId}")]
+        [SwaggerResponse(204, null, Description = "Account deleted")]
+        [SwaggerResponse(404, null, Description = "Account Id is not found")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult DeleteById([FromRoute]Guid accountId)
         {
             try
             {
-                Account account = _accountRepository.GetById(account_id);
-                if (account == null) return BadRequest();
-
-                account.IsRemove = true;
-
-                _accountRepository.Update(account);
-                _accountRepository.SaveChanges();
-
-                return NoContent();
+                if (_accountService.Delete(accountId)) return NoContent();
+                else return NotFound();
             }
             catch (Exception e)
             {

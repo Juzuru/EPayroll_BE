@@ -1,25 +1,29 @@
-﻿using EPayroll_BE.Models.Base;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EPayroll_BE.Models
+namespace EPayroll_BE.ViewModels
 {
-    public class SalarySheet : ModelBase
+    public class SalarySheetViewModel
     {
+    }
+
+    public class SalarySheetCreateModel
+    {
+        [Required]
         public string Name { get; set; }
+        [Required]
         public int TotalWorking { get; set; }
+        [Required]
         public float WorkingRate { get; set; }
+        [Required]
         public float Amount { get; set; }
 
+        [Required]
         public Guid PaySlipId { get; set; }
+        [Required]
         public Guid PayTypeId { get; set; }
-        
-        [ForeignKey("PaySlipId")]
-        public PaySlip PaySlip { get; set; }
-        [ForeignKey("PayTypeId")]
-        public PayType PayType { get; set; }
     }
 }

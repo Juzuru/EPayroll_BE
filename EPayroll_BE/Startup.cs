@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System;
 using EPayroll_BE.Utilities;
+using EPayroll_BE.Services;
 
 namespace EPayroll_BE
 {
@@ -52,7 +53,7 @@ namespace EPayroll_BE
                 });
             #endregion
             
-            #region Add Services
+            #region Add Repositories
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IPayItemRepository, PayItemRepository>();
@@ -67,6 +68,23 @@ namespace EPayroll_BE
             services.AddScoped<ISalarySheetRepository, SalarySheetRepository>();
             services.AddScoped<ISalaryTablePositionRepository, SalaryTablePositionRepository>();
             services.AddScoped<ISalaryTableRepository, SalaryTableRepository>();
+            #endregion
+
+            #region Add Services
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IPayItemService, PayItemService>();
+            services.AddScoped<IPayPeriodService, PayPeriodService>();
+            services.AddScoped<IPaySlipService, PaySlipService>();
+            services.AddScoped<IPayTypeAmountService, PayTypeAmountService>();
+            services.AddScoped<IPayTypeCategoryService, PayTypeCategoryService>();
+            services.AddScoped<IPayTypeService, PayTypeService>();
+            services.AddScoped<IPositionService, PositionService>();
+            services.AddScoped<ISalaryLevelService, SalaryLevelService>();
+            services.AddScoped<ISalaryModeService, SalaryModeService>();
+            services.AddScoped<ISalarySheetService, SalarySheetService>();
+            services.AddScoped<ISalaryTablePositionService, SalaryTablePositionService>();
+            services.AddScoped<ISalaryTableService, SalaryTableService>();
             #endregion
 
             services.AddSwaggerDocument(c =>

@@ -43,7 +43,7 @@ namespace EPayroll_BE.Repositories.Base
             return dbSet.ToList();
         }
 
-        public T GetById(int id)
+        public T GetById(Guid id)
         {
             return dbSet.Find(id);
         }
@@ -72,11 +72,6 @@ namespace EPayroll_BE.Repositories.Base
         {
             return dbSet.Where(where).Count();
         }
-
-        public IList<T> TakeLast(int skip, int take)
-        {
-            return dbSet.OrderByDescending(_ => _.Id).Skip(skip).Take(take).ToList();
-        }
     }
 
     public interface IRepositoryBase<T> where T : class
@@ -84,14 +79,13 @@ namespace EPayroll_BE.Repositories.Base
         void Add(T entity);
         void Add(IEnumerable<T> list);
         IList<T> GetAll();
-        T GetById(int id);
+        T GetById(Guid id);
         IList<T> Get(Expression<Func<T, bool>> where);
         void Update(T entity);
         void Delete(T entity);
         void Delete(Expression<Func<T, bool>> where);
         int Count();
         int Count(Expression<Func<T, bool>> where);
-        IList<T> TakeLast(int skip, int take);
         void SaveChanges();
     }
 }

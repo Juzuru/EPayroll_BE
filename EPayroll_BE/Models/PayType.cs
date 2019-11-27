@@ -11,7 +11,7 @@ namespace EPayroll_BE.Models
     {
         public string Name { get; set; }
 
-        public int PayTypeCategoryId { get; set; }
+        public Guid PayTypeCategoryId { get; set; }
 
         [ForeignKey("PayTypeCategoryId")]
         public PayTypeCategory PayTypeCategory { get; set; }

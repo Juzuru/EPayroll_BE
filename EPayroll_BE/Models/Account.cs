@@ -1,4 +1,5 @@
 ﻿using EPayroll_BE.Models.Base;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,16 +7,9 @@ namespace EPayroll_BE.Models
 {
     public class Account : ModelBase
     {
-        [Required]
         public string EmployeeCode { get; set; }
-        [Required]
         public string Password { get; set; }
-        [Required]
-        public bool IsRemove { get; set; }
-
-        public int EmployeeId { get; set; }
-
-        [ForeignKey("EmployeeId")]
-        public Employee Employee { get; set; }
+        public bool IsEnable { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

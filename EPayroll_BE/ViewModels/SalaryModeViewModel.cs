@@ -7,7 +7,12 @@ namespace EPayroll_BE.ViewModels
 {
     public class SalaryModeViewModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
+        public string Mode { get; set; }
+    }
+
+    public class SalaryModeCreateModel
+    {
         public string Mode { get; set; }
     }
 }

@@ -11,8 +11,8 @@ namespace EPayroll_BE.Models
     {
         public float Amount { get; set; }
 
-        public int PaySlipId { get; set; }
-        public int PayTypeId { get; set; }
+        public Guid PaySlipId { get; set; }
+        public Guid PayTypeId { get; set; }
 
         [ForeignKey("PaySlipId")]
         public PaySlip PaySlip { get; set; }

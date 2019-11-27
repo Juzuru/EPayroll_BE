@@ -11,6 +11,6 @@ namespace EPayroll_BE.Models.Base
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

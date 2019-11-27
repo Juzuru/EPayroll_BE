@@ -9,8 +9,8 @@ namespace EPayroll_BE.Models
 {
     public class SalaryTablePosition : ModelBase
     {
-        public int PositionId { get; set; }
-        public int SalaryTableId { get; set; }
+        public Guid PositionId { get; set; }
+        public Guid SalaryTableId { get; set; }
 
         [ForeignKey("PositionId")]
         public Position Position { get; set; }
