@@ -54,7 +54,6 @@ namespace EPayroll_BE
             #endregion
             
             #region Add Repositories
-            services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IFormularRepository, FormularRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IPayItemRepository, PayItemRepository>();
@@ -72,7 +71,6 @@ namespace EPayroll_BE
             #endregion
 
             #region Add Services
-            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IFormularService, FormularService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IPayItemService, PayItemService>();

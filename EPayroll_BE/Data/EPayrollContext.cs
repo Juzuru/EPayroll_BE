@@ -7,7 +7,6 @@ namespace EPayroll_BE.Data
     {
         public EPayrollContext(DbContextOptions<EPayrollContext> option) : base(option) { }
 
-        public virtual DbSet<Account> Account { get; set; }
         public virtual DbSet<Employee> Employee { get; set; }
         public virtual DbSet<Formular> Formular { get; set; }
         public virtual DbSet<PayItem> PayItem { get; set; }

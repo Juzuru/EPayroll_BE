@@ -13,6 +13,7 @@ namespace EPayroll_BE.Models
         public string Name { get; set; }
         public int Age { get; set; }
         public bool Gender { get; set; }
+        public string Email { get; set; }
         public string IdentifyNumber { get; set; }
         public bool IsDeleted { get; set; }
 
@@ -26,8 +27,5 @@ namespace EPayroll_BE.Models
         public SalaryMode SalaryMode { get; set; }
         [ForeignKey("SalaryLevelId")]
         public SalaryLevel SalaryLevel { get; set; }
-
-        [ForeignKey("Id")]
-        public Account account { get; set; }
     }
 }
