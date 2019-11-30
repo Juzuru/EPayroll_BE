@@ -32,10 +32,48 @@ namespace EPayroll_BE.Services
 
             return payPeriod.Id;
         }
+        public PayPeriodDetailViewModel GetDetail(Guid payPeriodId)
+        {
+            PayPeriod payPeriod = _payPeriodRepository.GetById(payPeriodId);
+            if(payPeriod != null)
+            {
+                return new PayPeriodDetailViewModel
+                {
+                    Id = payPeriod.Id,
+                    Name = payPeriod.Name,
+                    StartDate = payPeriod.StartDate,
+                    EndDate = payPeriod.EndDate,
+                    PayDate = payPeriod.PayDate
+                };
+            }
+            return null;
+        }
+        public IList<PayPeriodDetailViewModel> GetAll()
+        {
+            IList<PayPeriod> list = _payPeriodRepository.GetAll()
+                .OrderByDescending(_payPeriod => _payPeriod.StartDate)
+                .Reverse().ToList();
+            IList<PayPeriodDetailViewModel> result = new List<PayPeriodDetailViewModel>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                result.Add(new PayPeriodDetailViewModel
+                {
+                    Id = list[i].Id,
+                    Name = list[i].Name,
+                    StartDate = list[i].StartDate,
+                    EndDate = list[i].EndDate,
+                    PayDate = list[i].PayDate
+                });
+            }
+            return result;
+        }
     }
+
 
     public interface IPayPeriodService
     {
         Guid Add(PayPeriodCreateModel model);
+        PayPeriodDetailViewModel GetDetail(Guid payPeriodId);
+        IList<PayPeriodDetailViewModel> GetAll();
     }
 }
