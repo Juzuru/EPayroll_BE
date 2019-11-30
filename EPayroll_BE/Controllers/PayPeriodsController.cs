@@ -23,6 +23,44 @@ namespace EPayroll_BE.Controllers
         }
 
         #region Get
+
+        // Get a pay period by Id
+        [HttpGet("{payPeriodId}")]
+        [SwaggerResponse(200, typeof(PayPeriodDetailViewModel), Description ="Return a pay period")]
+        [SwaggerResponse(404, null, Description ="The pay period 's id not exist")]
+        [SwaggerResponse(500, null, Description ="Server error")]
+        public ActionResult GetById([FromRoute]Guid payPeriodId)
+        {
+            try
+            {
+                PayPeriodDetailViewModel result = _payPeriodService.GetDetail(payPeriodId);
+                if (result == null) return NotFound();
+                else return Ok(result);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
+        }
+
+        // Get all pay periods
+        [HttpGet]
+        [SwaggerResponse(200, typeof(IList<PayPeriodDetailViewModel>), Description = "Return all pay periods")]
+       [SwaggerResponse(500, null, Description ="Server error")]
+       public ActionResult GetAll()
+        {
+            try
+            {
+                return Ok(_payPeriodService.GetAll());
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
+        }
+
         #endregion
 
         #region Post
@@ -44,12 +82,30 @@ namespace EPayroll_BE.Controllers
         #endregion
 
         #region Put
+        [HttpPut]
+        [SwaggerResponse(501, null, Description ="Request not implemented")]
+        public ActionResult Put()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Patch
+        [HttpPatch]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Patch()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Delete
+        [HttpDelete("{payperiod_id}")]
+        [SwaggerResponse(501, null, Description ="Request not implemented")]
+        public ActionResult DeletePayPeriod()
+        {
+            return StatusCode(501);
+        }
         #endregion
     }
 }

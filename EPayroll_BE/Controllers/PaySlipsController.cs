@@ -58,12 +58,30 @@ namespace EPayroll_BE.Controllers
         #endregion
 
         #region Put
+        [HttpPut]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Put()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Patch
+        [HttpPatch]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Update()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Delete
+        [HttpDelete("{payslip_id}")]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult DeletePaySlips()
+        {
+            return StatusCode(501);
+        }
         #endregion
     }
 }
