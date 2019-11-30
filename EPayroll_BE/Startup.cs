@@ -32,9 +32,9 @@ namespace EPayroll_BE
         {
             // ===== Add DBContext =====
             services.AddDbContext<EPayrollContext>(options =>
-                options.UseSqlServer(@"Data Source=localhost;Initial Catalog=EPayroll;
+                options.UseSqlServer(@"Data Source=45.119.83.107;Initial Catalog=EPayroll;
                     persist security info=True;Integrated Security=False;TrustServerCertificate=False;
-                    uid=sa;password=maxsulapro0701;Trusted_Connection=False;MultipleActiveResultSets=true;"));
+                    uid=sa;password=sa@123456;Trusted_Connection=False;MultipleActiveResultSets=true;"));
 
             #region Add JWT Authenciation
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
@@ -55,6 +55,7 @@ namespace EPayroll_BE
             
             #region Add Repositories
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IFormularRepository, FormularRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IPayItemRepository, PayItemRepository>();
             services.AddScoped<IPayPeriodRepository, PayPeriodRepository>();
@@ -72,6 +73,7 @@ namespace EPayroll_BE
 
             #region Add Services
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IFormularService, FormularService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IPayItemService, PayItemService>();
             services.AddScoped<IPayPeriodService, PayPeriodService>();

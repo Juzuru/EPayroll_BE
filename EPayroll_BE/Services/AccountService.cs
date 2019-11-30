@@ -18,47 +18,21 @@ namespace EPayroll_BE.Services
             _accountRepository = accountRepository;
         }
 
-        public Guid Add(AccountCreateModel model)
+        public Guid Add(AccountLoginModel model)
         {
             Account account = new Account
             {
-                EmployeeCode = model.EmployeeCode,
+                Name = model.Name,
+                Email = model.Email,
+                Picture = model.Picture,
                 IsDeleted = false,
                 IsEnable = false,
-                Password = model.Password
             };
 
             _accountRepository.Add(account);
             _accountRepository.SaveChanges();
 
             return account.Id;
-        }
-
-        public void ChangePassword(Guid accountId, string newPassword)
-        {
-            Account account = _accountRepository.GetById(accountId);
-            account.Password = newPassword;
-
-            _accountRepository.Update(account);
-            _accountRepository.SaveChanges();
-        }
-
-        public Guid CheckLogin(AccountLoginModel model)
-        {
-            Account account = _accountRepository
-                .Get(_account => _account.EmployeeCode.Equals(model.EmployeeCode) && _account.Password.Equals(model.Password))
-                .FirstOrDefault();
-
-            return account.Id;
-        }
-
-        public bool ContainsEmployeeCode(string employeeCode)
-        {
-            Account account = _accountRepository
-                .Get(_account => _account.EmployeeCode.Equals(employeeCode))
-                .FirstOrDefault();
-
-            return account != null;
         }
 
         public bool Delete(Guid accountId)
@@ -76,14 +50,19 @@ namespace EPayroll_BE.Services
             }
             return false;
         }
+
+        public Guid? GetByEmail(string email)
+        {
+            Account account = _accountRepository.Get(_account => _account.Email.Equals(email)).FirstOrDefault();
+            if (account == null) return null;
+            return account.Id;
+        }
     }
 
     public interface IAccountService
     {
-        Guid Add(AccountCreateModel model);
-        void ChangePassword(Guid accountId, string newPassword);
-        Guid CheckLogin(AccountLoginModel model);
-        bool ContainsEmployeeCode(string employeeCode);
+        Guid Add(AccountLoginModel model);
         bool Delete(Guid accountId);
+        Guid? GetByEmail(string email);
     }
 }

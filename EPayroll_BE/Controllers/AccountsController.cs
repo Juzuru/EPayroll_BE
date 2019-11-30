@@ -41,71 +41,24 @@ namespace EPayroll_BE.Controllers
         #endregion
 
         #region Post
-        [HttpPost]
-        [AllowAnonymous]
-        [SwaggerResponse(201, typeof(string), Description = "Return Id of created account")]
-        [SwaggerResponse(400, typeof(AccountCreateErrorModel), Description = "Return an error model")]
-        [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
-        [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult Add([FromBody]AccountCreateModel model)
-        {
-            try
-            {
-                AccountCreateErrorModel errors = new AccountCreateErrorModel();
-                bool error = false;
-
-                if (model.EmployeeCode.Contains(" "))
-                {
-                    error = true;
-                    errors.EmployeeCodeError = "EmployeeCode must not have any space";
-                }
-                if (model.Password.Contains(" ")) {
-                    error = true;
-                    errors.EmployeeCodeError = "Password must not have any space";
-                }
-
-                if (!error)
-                {
-                    if (_accountService.ContainsEmployeeCode(model.EmployeeCode))
-                    {
-                        errors.EmployeeCodeError = "EmployeeCode existed!!!";
-                    }
-                    else
-                    {
-                        return StatusCode(201, _accountService.Add(model));
-                    }
-                }
-                return BadRequest(errors);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
-        }
-
         [AllowAnonymous]
         [HttpPost("login")]
-        [SwaggerResponse(200, typeof(AccountAuthorizedModel), Description = "Return an authorized model")]
+        [SwaggerResponse(200, typeof(AccountTokenModel), Description = "Return a token model")]
         [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
-        [SwaggerResponse(401, null, Description = "Unauthorized user")]
         [SwaggerResponse(500, null, Description = "Server error")]
         public ActionResult Login([FromBody]AccountLoginModel model)
         {
             try
             {
-                Guid accountId = _accountService.CheckLogin(model);
-
-                if (accountId == null) return Unauthorized();
-                else
+                Guid? accountId = _accountService.GetByEmail(model.Email);
+                if (accountId == null) accountId = _accountService.Add(model);
+                return Ok(new AccountTokenModel
                 {
-                    return Ok(new AccountAuthorizedModel
-                    {
-                        TokenType = "Bearer",
-                        Token = JWTUtilities.GenerateJwtToken(accountId.ToString(), new Claim[] {
-                                new Claim("AccountId", accountId.ToString())
-                            })
-                    });
-                }
+                    TokenType = "Bearer",
+                    Token = JWTUtilities.GenerateJwtToken(accountId.ToString(), new Claim[] {
+                        new Claim("AccountId", accountId.ToString())
+                    })
+                });
             }
             catch (Exception)
             {
@@ -143,55 +96,11 @@ namespace EPayroll_BE.Controllers
         #endregion
 
         #region Patch
-        [HttpPut("changePassword")]
-        [SwaggerResponse(204, null, Description = "Password changed")]
-        [SwaggerResponse(400, typeof(AccountChangePasswordErrorModel), Description = "Return an error model")]
-        [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
-        [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult ChangePassword([FromBody]AccountChangePasswordModel model)
+        [HttpPatch]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult ChangePassword()
         {
-            try
-            {
-                AccountChangePasswordErrorModel errors = new AccountChangePasswordErrorModel();
-                bool error = false;
-
-                if (model.OldPassword.Contains(" "))
-                {
-                    error = true;
-                    errors.OldPasswordError = "Old password must not have any space";
-                }
-                if (model.NewPassword.Contains(" "))
-                {
-                    error = true;
-                    errors.NewPasswordError = "New password must have any space";
-                }
-                if (model.ConfirmNewPassword.Contains(" "))
-                {
-                    error = true;
-                    errors.ConfirmNewPasswordError = "Confirm new password must have any space";
-                }
-                if (!model.NewPassword.Equals(model.ConfirmNewPassword))
-                {
-                    error = true;
-                    errors.ConfirmNewPasswordError = "Confirm new password must match the new password";
-                }
-
-                if (!error)
-                {
-                    if (Request.Headers.TryGetValue("Authorization", out StringValues value))
-                    {
-                        string accountId = JWTUtilities.GetClaimValueFromToken("AccountId", value.ToString());
-                        _accountService.ChangePassword(new Guid(accountId), model.NewPassword);
-                        return NoContent();
-                    }
-                    return StatusCode(500);
-                }
-                return BadRequest(errors);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+            return StatusCode(501);
         }
         #endregion
 
