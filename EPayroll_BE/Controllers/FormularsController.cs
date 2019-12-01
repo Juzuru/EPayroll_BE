@@ -13,11 +13,11 @@ namespace EPayroll_BE.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FormularController : ControllerBase
+    public class FormularsController : ControllerBase
     {
         private readonly IFormularService _formularService;
 
-        public FormularController(IFormularService formularService)
+        public FormularsController(IFormularService formularService)
         {
             _formularService = formularService;
         }
