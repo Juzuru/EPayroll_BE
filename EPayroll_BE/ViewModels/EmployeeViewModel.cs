@@ -37,6 +37,8 @@ namespace EPayroll_BE.ViewModels
         public string IdentifyNumber { get; set; }
         [Required]
         public string Email { get; set; }
+        [Required]
+        public string UserUID { get; set; }
 
         [Required]
         public Guid PositionId { get; set; }
@@ -44,5 +46,19 @@ namespace EPayroll_BE.ViewModels
         public Guid SalaryModeId { get; set; }
         [Required]
         public Guid SalaryLevelId { get; set; }
+    }
+
+    public class EmployeeCheckUserModel
+    {
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string UserUID { get; set; }
+    }
+    public class EmployeeAuthorizedModel
+    {
+        public string Token { get; set; }
+        public string TokenType { get; set; }
+        public Guid? Id { get; set; }
     }
 }

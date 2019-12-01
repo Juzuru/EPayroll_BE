@@ -35,12 +35,22 @@ namespace EPayroll_BE.Services
                 PositionId = model.PositionId,
                 SalaryLevelId = model.SalaryLevelId,
                 SalaryModeId = model.SalaryModeId,
-                Email = model.Email
+                Email = model.Email,
+                UserUID = model.UserUID
             };
 
             _employeeRepository.Add(employee);
             _employeeRepository.SaveChanges();
 
+            return employee.Id;
+        }
+
+        public Guid? CheckUser(EmployeeCheckUserModel model)
+        {
+            Employee employee = _employeeRepository
+                .Get(_employee => _employee.Email.Equals(model.Email) && _employee.UserUID.Equals(model.UserUID))
+                .FirstOrDefault();
+            if (employee == null) return null;
             return employee.Id;
         }
 
@@ -84,6 +94,7 @@ namespace EPayroll_BE.Services
     public interface IEmployeeService
     {
         Guid Add(EmployeeCreateModel model);
+        Guid? CheckUser(EmployeeCheckUserModel model);
         EmployeeDetailViewModel GetDetail(Guid employeeId);
     }
 }

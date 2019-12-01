@@ -36,9 +36,10 @@ namespace EPayroll_BE.Services
             return paySlip.Id;
         }
 
-        public IList<PaySlipViewModel> GetAll()
+        public IList<PaySlipViewModel> GetAll(Guid employeeId)
         {
-            IList<PaySlip> list = _paySlipRepository.GetAll()
+            IList<PaySlip> list = _paySlipRepository
+                .Get(_playSlip => _playSlip.EmployeeId.Equals(employeeId))
                 .OrderByDescending(_paySlip => _paySlip.CreatedDate)
                 .Reverse().ToList();
             IList<PaySlipViewModel> result = new List<PaySlipViewModel>();
@@ -68,6 +69,6 @@ namespace EPayroll_BE.Services
     public interface IPaySlipService
     {
         Guid Add(PaySlipCreateModel model);
-        IList<PaySlipViewModel> GetAll();
+        IList<PaySlipViewModel> GetAll(Guid employeeId);
     }
 }

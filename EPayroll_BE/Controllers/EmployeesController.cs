@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using EPayroll_BE.Models;
 using EPayroll_BE.Services;
@@ -56,6 +57,32 @@ namespace EPayroll_BE.Controllers
             try
             {
                 return StatusCode(201, _employeeService.Add(model));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost("check-user")]
+        [SwaggerResponse(200, typeof(EmployeeAuthorizedModel), Description = "Return a token and employee's id corresponding with the email and user UID")]
+        [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
+        [SwaggerResponse(404, null, Description = "The email is not allowed to access")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult CheckUser([FromBody]EmployeeCheckUserModel model)
+        {
+            try
+            {
+                Guid? employeeId = _employeeService.CheckUser(model);
+                if (employeeId == null) return NotFound();
+
+                return Ok(new EmployeeAuthorizedModel { 
+                    Id = employeeId,
+                    Token = JWTUtilities.GenerateJwtToken(model.UserUID, new Claim[] {
+                        new Claim("EmployeeId", employeeId.ToString()),
+                    }),
+                    TokenType = "Bearer"
+                });
             }
             catch (Exception)
             {
