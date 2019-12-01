@@ -55,14 +55,7 @@ namespace EPayroll_BE.Controllers
         {
             try
             {
-                if (Request.Headers.TryGetValue("Authorization", out StringValues value))
-                {
-                    string accountId = JWTUtilities.GetClaimValueFromToken("AccountId", value.ToString());
-                    _employeeService.Add(model, new Guid(accountId));
-
-                    return StatusCode(201);
-                }
-                return StatusCode(500);
+                return StatusCode(201, _employeeService.Add(model));
             }
             catch (Exception)
             {

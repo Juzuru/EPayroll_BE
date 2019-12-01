@@ -35,6 +35,8 @@ namespace EPayroll_BE.ViewModels
         public bool Gender { get; set; }
         [Required]
         public string IdentifyNumber { get; set; }
+        [Required]
+        public string Email { get; set; }
 
         [Required]
         public Guid PositionId { get; set; }

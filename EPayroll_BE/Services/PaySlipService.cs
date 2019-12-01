@@ -51,12 +51,13 @@ namespace EPayroll_BE.Services
                 {
                     Id = list[i].Id,
                     PaySlipCode = list[i].PaySlipCode,
-                    CreatedDate = list[i].CreatedDate,
                     PayPeriod = new PayPeriodViewModel
                     {
                         Id = payPeriod.Id,
                         Name = payPeriod.Name
-                    }
+                    },
+                    Amount = list[i].Amount,
+                    Status = list[i].Status
                 });
             }
 

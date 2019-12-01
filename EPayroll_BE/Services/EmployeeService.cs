@@ -23,21 +23,25 @@ namespace EPayroll_BE.Services
             _salaryLevelRepository = salaryLevelRepository;
         }
 
-        public void Add(EmployeeCreateModel model, Guid accountId)
+        public Guid Add(EmployeeCreateModel model)
         {
-            _employeeRepository.Add(new Employee
+            Employee employee = new Employee
             {
                 Age = model.Age,
                 Gender = model.Gender,
-                Id = accountId,
                 IdentifyNumber = model.IdentifyNumber,
                 IsDeleted = false,
                 Name = model.Name,
                 PositionId = model.PositionId,
                 SalaryLevelId = model.SalaryLevelId,
-                SalaryModeId = model.SalaryModeId
-            });
+                SalaryModeId = model.SalaryModeId,
+                Email = model.Email
+            };
+
+            _employeeRepository.Add(employee);
             _employeeRepository.SaveChanges();
+
+            return employee.Id;
         }
 
         public EmployeeDetailViewModel GetDetail(Guid employeeId)
@@ -79,7 +83,7 @@ namespace EPayroll_BE.Services
 
     public interface IEmployeeService
     {
-        void Add(EmployeeCreateModel model, Guid accountId);
+        Guid Add(EmployeeCreateModel model);
         EmployeeDetailViewModel GetDetail(Guid employeeId);
     }
 }
