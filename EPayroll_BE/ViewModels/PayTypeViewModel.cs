@@ -8,6 +8,9 @@ namespace EPayroll_BE.ViewModels
 {
     public class PayTypeViewModel
     {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public PayTypeCategoryViewModel PayTypeCategory { get; set; }
     }
 
     public class PayTypeCreateModel

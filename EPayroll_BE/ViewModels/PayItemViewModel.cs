@@ -8,6 +8,13 @@ namespace EPayroll_BE.ViewModels
 {
     public class PayItemViewModel
     {
+        public Guid Id { get; set; }
+        public float Amount { get; set; }
+        public bool IsTemplate { get; set; }
+
+        public PaySlipViewModel PaySlip { get; set; }
+        public PayTypeViewModel PayType { get; set; }
+        public FormularViewModel Formular { get; set; }
     }
 
     public class PayItemCreateModel

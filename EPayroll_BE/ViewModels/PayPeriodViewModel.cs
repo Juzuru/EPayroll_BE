@@ -10,6 +10,10 @@ namespace EPayroll_BE.ViewModels
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public DateTime PayDate { get; set; }
+
     }
 
     public class PayPeriodCreateModel
