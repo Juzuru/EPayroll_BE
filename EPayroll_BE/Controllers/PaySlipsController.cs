@@ -27,13 +27,13 @@ namespace EPayroll_BE.Controllers
         [SwaggerResponse(200, typeof(IList<PaySlipViewModel>), Description = "Return all payslip order by created date")]
         [SwaggerResponse(400, null, Description = "Require employeeId in query string")]
         [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult GetAll([FromQuery]Guid? employeeId = null)
+        public ActionResult GetAll([FromQuery]Guid employeeId)
         {
             try
             {
                 if (employeeId == null) return BadRequest();
 
-                return Ok(_paySlipService.GetAll());
+                return Ok(_paySlipService.GetAll(employeeId));
             }
             catch (Exception)
             {
