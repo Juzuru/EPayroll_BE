@@ -23,6 +23,40 @@ namespace EPayroll_BE.Controllers
         }
 
         #region Get
+        [HttpGet]
+        [SwaggerResponse(200, typeof(IList<PayItemViewModel>), Description = "Return all pay item  ")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GetAll()
+        {
+            try
+            {
+                return Ok(_payItemService.GetAll());
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
+        }
+
+        //
+        [HttpGet("{pay_item_id}")]
+        [SwaggerResponse(200, typeof(PayItemViewModel), Description = "Return a pay item")]
+        [SwaggerResponse(404, null, Description = "The pay item's id not exist")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GetById([FromRoute]Guid payItemId)
+        {
+            try
+            {
+                PayItemViewModel result = _payItemService.GetById(payItemId);
+                if (result == null) return NotFound();
+                else return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
         #endregion
 
         #region Post
@@ -44,12 +78,30 @@ namespace EPayroll_BE.Controllers
         #endregion
 
         #region Put
+        [HttpPut]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Put()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Patch
+        [HttpPatch]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Update()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Delete
+        [HttpDelete("{pay_period_id}")]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult DeletePayPeriod()
+        {
+            return StatusCode(501);
+        }
         #endregion
     }
 }
