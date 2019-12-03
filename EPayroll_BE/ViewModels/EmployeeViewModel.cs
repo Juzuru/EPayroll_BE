@@ -24,6 +24,20 @@ namespace EPayroll_BE.ViewModels
         public SalaryModeViewModel SalaryMode { get; set; }
         public SalaryLevelViewModel SalaryLevel { get; set; }
     }
+    public class EmployeeListViewModel
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public bool Gender { get; set; }
+        public string Email { get; set; }
+        public string UserUID { get; set; }
+        public string IdentifyNumber { get; set; }
+        public bool IsDeleted { get; set; }
+        public PositionViewModel Position { get; set; }
+        public SalaryModeViewModel SalaryMode { get; set; }
+        public SalaryLevelViewModel SalaryLevel { get; set; }
+    }
 
     public class EmployeeCreateModel
     {

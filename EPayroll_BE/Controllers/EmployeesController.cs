@@ -45,6 +45,23 @@ namespace EPayroll_BE.Controllers
                 return StatusCode(500);
             }
         }
+
+        // Get all
+        [HttpGet]
+        [SwaggerResponse(200, typeof(IList<EmployeeListViewModel>),Description ="Return all employees")]
+       [SwaggerResponse(500, null, Description ="Server error")]
+       public ActionResult GetAll()
+        {
+            try
+            {
+                return Ok(_employeeService.GetAll());
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
+        }
         #endregion
 
         #region Post
