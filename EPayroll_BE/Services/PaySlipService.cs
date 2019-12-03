@@ -42,21 +42,15 @@ namespace EPayroll_BE.Services
                 .Get(_playSlip => _playSlip.EmployeeId.Equals(employeeId))
                 .OrderByDescending(_paySlip => _paySlip.CreatedDate)
                 .Reverse().ToList();
+
             IList<PaySlipViewModel> result = new List<PaySlipViewModel>();
-            PayPeriod payPeriod;
 
             for (int i = 0; i < list.Count; i++)
             {
-                payPeriod = _payPeriodRepository.GetById(list[i].PayPeriodId);
                 result.Add(new PaySlipViewModel
                 {
                     Id = list[i].Id,
                     PaySlipCode = list[i].PaySlipCode,
-                    PayPeriod = new PayPeriodViewModel
-                    {
-                        Id = payPeriod.Id,
-                        Name = payPeriod.Name
-                    },
                     Amount = list[i].Amount,
                     Status = list[i].Status
                 });
