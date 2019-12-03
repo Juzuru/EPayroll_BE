@@ -98,8 +98,8 @@ namespace EPayroll_BE.Services
                         Name = payType.Name,
                         PayTypeCategory = new PayTypeCategoryViewModel
                         {
-                            Id = payType.Id,
-                            Name = payType.Name,
+                            Id = payTypeCategory.Id,
+                            Name = payTypeCategory.Name,
                         }
                     }
 

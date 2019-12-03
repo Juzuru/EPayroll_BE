@@ -39,8 +39,8 @@ namespace EPayroll_BE.Controllers
             }
         }
 
-        //
-        [HttpGet("{pay_item_id}")]
+        
+        [HttpGet]
         [SwaggerResponse(200, typeof(PayItemViewModel), Description = "Return a pay item")]
         [SwaggerResponse(404, null, Description = "The pay item's id not exist")]
         [SwaggerResponse(500, null, Description = "Server error")]

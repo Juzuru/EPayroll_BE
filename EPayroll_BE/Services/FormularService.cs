@@ -29,10 +29,26 @@ namespace EPayroll_BE.Services
 
             return formular.Id;
         }
+
+        public IList<FormularViewModel> GetAll()
+        {
+            IList<Formular> list = _formularRepository.GetAll().ToList();
+            IList<FormularViewModel> result = new List<FormularViewModel>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                result.Add(new FormularViewModel
+                {
+                    Id = list[i].Id,
+                    Description = list[i].Description,
+                });
+            }
+            return result;
+        }
     }
 
     public interface IFormularService
     {
         Guid Add(FormularCreateModel model);
+        IList<FormularViewModel> GetAll();
     }
 }
