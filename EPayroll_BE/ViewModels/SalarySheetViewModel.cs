@@ -6,24 +6,20 @@ using System.Threading.Tasks;
 
 namespace EPayroll_BE.ViewModels
 {
-    public class SalarySheetViewModel
+    public class SalaryShiftViewModel
     {
     }
 
-    public class SalarySheetCreateModel
+    public class SalaryShiftCreateModel
     {
         [Required]
-        public string Name { get; set; }
+        public int OriginalHour { get; set; }
         [Required]
-        public int TotalWorking { get; set; }
+        public int OverTimeHour { get; set; }
         [Required]
-        public float WorkingRate { get; set; }
-        [Required]
-        public float Amount { get; set; }
+        public DateTime Date { get; set; }
 
         [Required]
         public Guid PaySlipId { get; set; }
-        [Required]
-        public Guid PayTypeId { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace EPayroll_BE.Controllers
             {
                 return StatusCode(201, _payItemService.Add(model, false));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return StatusCode(500);
             }

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace EPayroll_BE.Repositories
 {
-    public class SalarySheetRepository : RepositoryBase<SalarySheet>, ISalarySheetRepository
+    public class SalaryShiftRepository : RepositoryBase<SalaryShift>, ISalaryShiftRepository
     {
-        public SalarySheetRepository(EPayrollContext context) : base(context) { }
+        public SalaryShiftRepository(EPayrollContext context) : base(context) { }
     }
 
-    public interface ISalarySheetRepository : IRepositoryBase<SalarySheet>
+    public interface ISalaryShiftRepository : IRepositoryBase<SalaryShift>
     {
 
     }
