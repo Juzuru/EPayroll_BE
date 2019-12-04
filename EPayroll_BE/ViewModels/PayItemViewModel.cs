@@ -14,7 +14,6 @@ namespace EPayroll_BE.ViewModels
 
         public PaySlipViewModel PaySlip { get; set; }
         public PayTypeViewModel PayType { get; set; }
-        public FormularViewModel Formular { get; set; }
     }
 
     public class PayItemCreateModel

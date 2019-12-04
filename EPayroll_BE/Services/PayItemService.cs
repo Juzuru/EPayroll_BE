@@ -56,7 +56,7 @@ namespace EPayroll_BE.Services
             IList<PayItemViewModel> result = new List<PayItemViewModel>();
             PaySlip paySlip;
             PayType payType;
-            Formular formular;
+           // Formular formular;
             PayPeriod payPeriod;
             PayTypeCategory payTypeCategory;
 
@@ -64,7 +64,7 @@ namespace EPayroll_BE.Services
             {
                 paySlip = _paySlipRepository.GetById(list[i].PaySlipId);
                 payType = _payTypeRepository.GetById(list[i].PayTypeId);
-                formular = _formularRepository.GetById(list[i].FormularId);
+               // formular = _formularRepository.GetById(list[i].FormularId);
                 payPeriod = _payPeriodRepository.GetById(paySlip.PayPeriodId);
                 payTypeCategory = _payTypeCategoryRepository.GetById(payType.PayTypeCategoryId);
 
@@ -73,11 +73,7 @@ namespace EPayroll_BE.Services
                     Id = list[i].Id,
                     Amount = list[i].Amount,
                     IsTemplate = list[i].IsTemplate,
-                    Formular = new FormularViewModel
-                    {
-                        Id = formular.Id,
-                        Description = formular.Description,
-                    },
+                   
                     PaySlip = new PaySlipViewModel
                     {
                         Id = paySlip.Id,
@@ -118,7 +114,8 @@ namespace EPayroll_BE.Services
 
                 PaySlip paySlip = _paySlipRepository.GetById(payItem.PaySlipId);
                 PayType payType = _payTypeRepository.GetById(payItem.PayTypeId);
-                Formular formular = _formularRepository.GetById(payItem.FormularId);
+
+              //  Formular formular = _formularRepository.GetById(new Guid(payItem.FormularId.ToString()));
                 PayPeriod payPeriod = _payPeriodRepository.GetById(paySlip.PayPeriodId);
                 PayTypeCategory payTypeCategory = _payTypeCategoryRepository.GetById(payType.PayTypeCategoryId);
 
@@ -152,11 +149,6 @@ namespace EPayroll_BE.Services
                             Name = payTypeCategory.Name
                         }
                     },
-                    Formular = new FormularViewModel
-                    {
-                        Id = formular.Id,
-                        Description = formular.Description,
-                    }
                 };
             }
             return null;
