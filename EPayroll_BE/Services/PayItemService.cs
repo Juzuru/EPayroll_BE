@@ -34,13 +34,14 @@ namespace EPayroll_BE.Services
             _payTypeCategoryRepository = payTypeCategoryRepository;
         }
 
-        public Guid Add(PayItemCreateModel model)
+        public Guid Add(PayItemCreateModel model, bool isTemplate)
         {
             PayItem payItem = new PayItem
             {
                 Amount = model.Amount,
                 PaySlipId = model.PaySlipId,
-                PayTypeId = model.PayTypeId
+                PayTypeId = model.PayTypeId,
+                IsTemplate = isTemplate
             };
 
             _payItemRepository.Add(payItem);
@@ -164,8 +165,9 @@ namespace EPayroll_BE.Services
 
     public interface IPayItemService
     {
-        Guid Add(PayItemCreateModel model);
+        
         IList<PayItemViewModel> GetAll();
         PayItemViewModel GetById(Guid payItemId);
+        Guid Add(PayItemCreateModel model, bool isTemplate);
     }
 }

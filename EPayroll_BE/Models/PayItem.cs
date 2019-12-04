@@ -14,7 +14,7 @@ namespace EPayroll_BE.Models
 
         public Guid PaySlipId { get; set; }
         public Guid PayTypeId { get; set; }
-        public Guid FormularId { get; set; }
+        public Guid? FormularId { get; set; }
 
         [ForeignKey("PaySlipId")]
         public PaySlip PaySlip { get; set; }
