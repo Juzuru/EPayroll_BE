@@ -18,7 +18,7 @@ namespace EPayroll_BE.Data
         public virtual DbSet<Position> Position { get; set; }
         public virtual DbSet<SalaryLevel> SalaryLevel { get; set; }
         public virtual DbSet<SalaryMode> SalaryMode { get; set; }
-        public virtual DbSet<SalarySheet> SalarySheet { get; set; }
+        public virtual DbSet<SalaryShift> SalaryShift { get; set; }
         public virtual DbSet<SalaryTable> SalaryTable { get; set; }
         public virtual DbSet<SalaryTablePosition> SalaryTablePosition { get; set; }
 
