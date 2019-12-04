@@ -34,13 +34,12 @@ namespace EPayroll_BE.Controllers
             }
             catch (Exception)
             {
-
                 return StatusCode(500);
             }
         }
 
         
-        [HttpGet]
+        [HttpGet("{payItemId}")]
         [SwaggerResponse(200, typeof(PayItemViewModel), Description = "Return a pay item")]
         [SwaggerResponse(404, null, Description = "The pay item's id not exist")]
         [SwaggerResponse(500, null, Description = "Server error")]
@@ -96,9 +95,9 @@ namespace EPayroll_BE.Controllers
         #endregion
 
         #region Delete
-        [HttpDelete("{pay_period_id}")]
+        [HttpDelete("{pay_item_id}")]
         [SwaggerResponse(501, null, Description = "Request not implemented")]
-        public ActionResult DeletePayPeriod()
+        public ActionResult DeletePayItem()
         {
             return StatusCode(501);
         }

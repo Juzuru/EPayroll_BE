@@ -23,6 +23,21 @@ namespace EPayroll_BE.Controllers
         }
 
         #region Get
+        [HttpGet]
+        [SwaggerResponse(200, typeof(IList<PayTypeCategoryViewModel>), Description = "Return all pay type categories  ")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GetAll()
+        {
+            try
+            {
+                return Ok(_payTypeCategoryService.GetAll());
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
+        }
         #endregion
 
         #region Post
@@ -44,12 +59,30 @@ namespace EPayroll_BE.Controllers
         #endregion
 
         #region Put
+        [HttpPut]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Put()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Patch
+        [HttpPatch]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Update()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Delete
+        [HttpDelete("{pay_type_category_id}")]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult DeletePayTypeCategory()
+        {
+            return StatusCode(501);
+        }
         #endregion
     }
 }

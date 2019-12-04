@@ -29,10 +29,26 @@ namespace EPayroll_BE.Services
 
             return payTypeCategory.Id;
         }
+
+        public IList<PayTypeCategoryViewModel> GetAll()
+        {
+            IList<PayTypeCategory> list = _payTypeCategoryRepository.GetAll().ToList();
+            IList<PayTypeCategoryViewModel> result = new List<PayTypeCategoryViewModel>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                result.Add(new PayTypeCategoryViewModel
+                {
+                    Id = list[i].Id,
+                    Name = list[i].Name,
+                });
+            }
+            return result;
+        }
     }
 
     public interface IPayTypeCategoryService
     {
         Guid Add(PayTypeCategoryCreateModel model);
+        IList<PayTypeCategoryViewModel> GetAll();
     }
 }

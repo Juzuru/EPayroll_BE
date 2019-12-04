@@ -60,6 +60,7 @@ namespace EPayroll_BE.Controllers
         #endregion
 
         #region Put
+        [HttpPut]
         [SwaggerResponse(501, null, Description = "Request not implemented")]
         public ActionResult Put()
         {
