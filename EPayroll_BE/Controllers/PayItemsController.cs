@@ -39,15 +39,33 @@ namespace EPayroll_BE.Controllers
         }
 
         
-        [HttpGet("{payItemId}")]
-        [SwaggerResponse(200, typeof(PayItemViewModel), Description = "Return a pay item")]
-        [SwaggerResponse(404, null, Description = "The pay item's id not exist")]
+        //[HttpGet("{payItemId}")]
+        //[SwaggerResponse(200, typeof(PayItemViewModel), Description = "Return a pay item")]
+        //[SwaggerResponse(404, null, Description = "The pay item's id not exist")]
+        //[SwaggerResponse(500, null, Description = "Server error")]
+        //public ActionResult GetById([FromRoute]Guid payItemId)
+        //{
+        //    try
+        //    {
+        //        PayItemViewModel result = _payItemService.GetById(payItemId);
+        //        if (result == null) return NotFound();
+        //        else return Ok(result);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode(500);
+        //    }
+        //}
+
+        [HttpGet("{paySlipId}")]
+        [SwaggerResponse(200, typeof(PayItemsViewModel), Description = "Return list pay items with month and allowance for Pay Slip by paySlipId")]
+        [SwaggerResponse(404, null, Description = "The pay slipId's id not exist")]
         [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult GetById([FromRoute]Guid payItemId)
+        public ActionResult GetByPaySlipId([FromRoute]Guid paySlipId)
         {
             try
             {
-                PayItemViewModel result = _payItemService.GetById(payItemId);
+                PayItemsViewModel result = _payItemService.GetByPaySlipId(paySlipId);
                 if (result == null) return NotFound();
                 else return Ok(result);
             }

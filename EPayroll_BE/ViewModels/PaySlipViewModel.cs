@@ -13,6 +13,7 @@ namespace EPayroll_BE.ViewModels
         public string Status { get; set; }
         public float Amount { get; set; }
         public PayPeriodViewModel PayPeriod { get; set; }
+        public EmployeeViewModel Employee { get; set; }
     }
 
     public class PaySlipCreateModel

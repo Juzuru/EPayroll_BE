@@ -14,6 +14,7 @@ namespace EPayroll_BE.Services
         private readonly IPaySlipRepository _paySlipRepository;
         private readonly IPayTypeRepository _payTypeRepository;
         private readonly IFormularRepository _formularRepository;
+        private readonly IEmployeeRepository _employeeRepository;
 
         private readonly IPayPeriodRepository _payPeriodRepository;
 
@@ -24,7 +25,8 @@ namespace EPayroll_BE.Services
             IPayTypeRepository payTypeRepository,
             IFormularRepository formularRepository,
             IPayTypeCategoryRepository payTypeCategoryRepository,
-            IPayPeriodRepository payPeriodRepository)
+            IPayPeriodRepository payPeriodRepository,
+            IEmployeeRepository employeeRepository)
         {
             _payItemRepository = payItemRepository;
             _paySlipRepository = paySlipRepository;
@@ -32,6 +34,7 @@ namespace EPayroll_BE.Services
 
             _payPeriodRepository = payPeriodRepository;
             _payTypeCategoryRepository = payTypeCategoryRepository;
+            _employeeRepository = employeeRepository;
         }
 
         public Guid Add(PayItemCreateModel model, bool isTemplate)
@@ -58,7 +61,7 @@ namespace EPayroll_BE.Services
             IList<PayItemViewModel> result = new List<PayItemViewModel>();
             PaySlip paySlip;
             PayType payType;
-           // Formular formular;
+            // Formular formular;
             PayPeriod payPeriod;
             PayTypeCategory payTypeCategory;
 
@@ -66,7 +69,7 @@ namespace EPayroll_BE.Services
             {
                 paySlip = _paySlipRepository.GetById(list[i].PaySlipId);
                 payType = _payTypeRepository.GetById(list[i].PayTypeId);
-               // formular = _formularRepository.GetById(list[i].FormularId);
+                // formular = _formularRepository.GetById(list[i].FormularId);
                 payPeriod = _payPeriodRepository.GetById(paySlip.PayPeriodId);
                 payTypeCategory = _payTypeCategoryRepository.GetById(payType.PayTypeCategoryId);
 
@@ -75,7 +78,7 @@ namespace EPayroll_BE.Services
                     Id = list[i].Id,
                     Amount = list[i].Amount,
                     IsTemplate = list[i].IsTemplate,
-                   
+
                     PaySlip = new PaySlipViewModel
                     {
                         Id = paySlip.Id,
@@ -117,7 +120,7 @@ namespace EPayroll_BE.Services
                 PaySlip paySlip = _paySlipRepository.GetById(payItem.PaySlipId);
                 PayType payType = _payTypeRepository.GetById(payItem.PayTypeId);
 
-              //  Formular formular = _formularRepository.GetById(new Guid(payItem.FormularId.ToString()));
+                //  Formular formular = _formularRepository.GetById(new Guid(payItem.FormularId.ToString()));
                 PayPeriod payPeriod = _payPeriodRepository.GetById(paySlip.PayPeriodId);
                 PayTypeCategory payTypeCategory = _payTypeCategoryRepository.GetById(payType.PayTypeCategoryId);
 
@@ -155,13 +158,110 @@ namespace EPayroll_BE.Services
             }
             return null;
         }
+
+        public PayItemsViewModel GetByPaySlipId(Guid paySlipId)
+        {
+
+            IList<PayItem> list = _payItemRepository
+                .Get(_payItem => _payItem.PaySlipId.Equals(paySlipId))
+                .ToList();
+
+
+            if (list != null)
+            {
+
+                IList<PayItemViewModel> payItemsInMonth = new List<PayItemViewModel>();
+                IList<PayItemViewModel> payItemsAllowance = new List<PayItemViewModel>();
+
+                foreach (var item in list)
+                {
+                    PaySlip paySlip = _paySlipRepository.GetById(item.PaySlipId);
+                    Employee employee = _employeeRepository.GetById(paySlip.EmployeeId);
+
+                    PayType payType = _payTypeRepository.GetById(item.PayTypeId);
+                    PayTypeCategory payTypeCategory = _payTypeCategoryRepository.GetById(payType.PayTypeCategoryId);
+                    string compare = "PHỤ CẤP";
+                    if (payTypeCategory.Name.ToUpper().Contains(compare.ToUpper()))
+                    {
+                        payItemsAllowance.Add(new PayItemViewModel
+                        {
+                            Id = item.Id,
+                            Amount = item.Amount,
+                            IsTemplate = item.IsTemplate,
+                            PaySlip = new PaySlipViewModel
+                            {
+                                Id = paySlip.Id,
+                                Amount = paySlip.Amount,
+                                PaySlipCode = paySlip.PaySlipCode,
+                                Status = paySlip.Status,
+                                Employee = new EmployeeViewModel
+                                {
+                                    Id = employee.Id,
+                                    Name = employee.Name
+                                }
+                            },
+                            PayType = new PayTypeViewModel
+                            {
+                                Id = payType.Id,
+                                Name = payType.Name,
+                                PayTypeCategory = new PayTypeCategoryViewModel
+                                {
+                                    Id = payTypeCategory.Id,
+                                    Name = payTypeCategory.Name
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        payItemsInMonth.Add(new PayItemViewModel
+                        {
+                            Id = item.Id,
+                            Amount = item.Amount,
+                            IsTemplate = item.IsTemplate,
+                            PaySlip = new PaySlipViewModel
+                            {
+                                Id = paySlip.Id,
+                                Amount = paySlip.Amount,
+                                PaySlipCode = paySlip.PaySlipCode,
+                                Status = paySlip.Status,
+                                Employee = new EmployeeViewModel
+                                {
+                                    Id = employee.Id,
+                                    Name = employee.Name
+                                }
+                            },
+                            PayType = new PayTypeViewModel
+                            {
+                                Id = payType.Id,
+                                Name = payType.Name,
+                                PayTypeCategory = new PayTypeCategoryViewModel
+                                {
+                                    Id = payTypeCategory.Id,
+                                    Name = payTypeCategory.Name
+                                }
+                            }
+                        });
+                    }
+                }
+
+                return new PayItemsViewModel
+                {
+                    PayItemsInMonth = payItemsInMonth,
+                    PayItemsAllowance = payItemsAllowance
+                };
+            }
+
+            return null;
+        }
     }
 
     public interface IPayItemService
     {
-        
+
         IList<PayItemViewModel> GetAll();
         PayItemViewModel GetById(Guid payItemId);
         Guid Add(PayItemCreateModel model, bool isTemplate);
+        PayItemsViewModel GetByPaySlipId(Guid paySlipId);
     }
 }

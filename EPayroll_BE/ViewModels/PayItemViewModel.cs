@@ -15,6 +15,11 @@ namespace EPayroll_BE.ViewModels
         public PaySlipViewModel PaySlip { get; set; }
         public PayTypeViewModel PayType { get; set; }
     }
+    public class PayItemsViewModel
+    {
+        public IList<PayItemViewModel> PayItemsInMonth { get; set; }
+        public IList<PayItemViewModel> PayItemsAllowance { get; set; }
+    }
 
     public class PayItemCreateModel
     {
