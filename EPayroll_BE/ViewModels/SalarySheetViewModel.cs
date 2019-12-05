@@ -8,6 +8,11 @@ namespace EPayroll_BE.ViewModels
 {
     public class SalaryShiftViewModel
     {
+        public Guid Id { get; set; }
+        public int OriginalHour { get; set; }
+        public int OverTimeHour { get; set; }
+        public DateTime Date { get; set; }
+        public PaySlipViewModel PaySlipViewModel { get; set; }
     }
 
     public class SalaryShiftCreateModel
