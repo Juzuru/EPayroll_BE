@@ -29,10 +29,27 @@ namespace EPayroll_BE.Services
 
             return position.Id;
         }
+
+        public IList<PositionViewModel> GetAll()
+        {
+            IList<Position> list = _positionRepository.GetAll().OrderByDescending(
+                _position => _position.Name).Reverse().ToList();
+            IList<PositionViewModel> result = new List<PositionViewModel>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                result.Add(new PositionViewModel
+                {
+                    Id = list[i].Id,
+                    Name = list[i].Name
+                });
+            }
+            return result;
+        }
     }
 
     public interface IPositionService
     {
         Guid Add(PositionCreateModel model);
+        IList<PositionViewModel> GetAll();
     }
 }
