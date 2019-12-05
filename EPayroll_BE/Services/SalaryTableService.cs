@@ -33,10 +33,31 @@ namespace EPayroll_BE.Services
 
             return salaryTable.Id;
         }
+
+        public IList<SalaryTableViewModel> GetAll()
+        {
+            IList<SalaryTable> list = _salaryTableRepository.GetAll().ToList();
+            IList<SalaryTableViewModel> result = new List<SalaryTableViewModel>();
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                result.Add(new SalaryTableViewModel
+                {
+                    Id = list[i].Id,
+                    Name = list[i].Name,
+                    StartDate = list[i].StartDate,
+                    EndDate = list[i].EndDate,
+                    CreatedDate = list[i].CreatedDate,
+                    IsEnable = list[i].IsEnable,
+                });
+            }
+            return result;
+        }
     }
 
     public interface ISalaryTableService
     {
         Guid Add(SalaryTableCreateModel model);
+        IList<SalaryTableViewModel> GetAll();
     }
 }
