@@ -29,10 +29,27 @@ namespace EPayroll_BE.Services
 
             return salaryMode.Id;
         }
+
+        public IList<SalaryModeViewModel> GetAll()
+        {
+            IList<SalaryMode> list = _salaryModeRepository.GetAll().ToList();
+            IList<SalaryModeViewModel> result = new List<SalaryModeViewModel>();
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                result.Add(new SalaryModeViewModel
+                {
+                    Id = list[i].Id,
+                    Mode = list[i].Mode,
+                });
+            }
+            return result;
+        }
     }
 
     public interface ISalaryModeService
     {
         Guid Add(SalaryModeCreateModel model);
+        IList<SalaryModeViewModel> GetAll();
     }
 }

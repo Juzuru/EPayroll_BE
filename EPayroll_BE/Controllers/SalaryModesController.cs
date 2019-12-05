@@ -23,6 +23,21 @@ namespace EPayroll_BE.Controllers
         }
 
         #region Get
+
+        [HttpGet]
+        [SwaggerResponse(200, typeof(IList<SalaryLevelViewModel>), Description = "Return all salary mode ")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GetAll()
+        {
+            try
+            {
+                return Ok(_salaryModeService.GetAll());
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
         #endregion
 
         #region Post
@@ -44,12 +59,30 @@ namespace EPayroll_BE.Controllers
         #endregion
 
         #region Put
+        [HttpPut]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Put()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Patch
+        [HttpPatch]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Update()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Delete
+        [HttpDelete("{salary_mode_id}")]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult DeleteSalaryMode()
+        {
+            return StatusCode(501);
+        }
         #endregion
     }
 }
