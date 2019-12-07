@@ -65,7 +65,7 @@ namespace EPayroll_BE.Controllers
 
         #region Post
         [HttpPost]
-        [SwaggerResponse(201, typeof(string), Description = "Return Id of created payPeriod")]
+        [SwaggerResponse(201, typeof(Guid), Description = "Return Id of created payPeriod")]
         [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
         [SwaggerResponse(500, null, Description = "Server error")]
         public ActionResult Add([FromBody]PayPeriodCreateModel model)

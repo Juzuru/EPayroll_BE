@@ -49,7 +49,7 @@ namespace EPayroll_BE.Controllers
 
         #region Post
         [HttpPost]
-        [SwaggerResponse(201, typeof(int), Description = "Return created employee's id")]
+        [SwaggerResponse(201, typeof(Guid), Description = "Return created employee's id")]
         [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
         [SwaggerResponse(500, null, Description = "Server error")]
         public ActionResult CreateEmployee([FromBody]EmployeeCreateModel model)

@@ -12,11 +12,13 @@ namespace EPayroll_BE.Services
     {
         private readonly IPaySlipRepository _paySlipRepository;
         private readonly IPayPeriodRepository _payPeriodRepository;
+        private readonly IPayItemRepository _payItemRepository;
 
-        public PaySlipService(IPaySlipRepository paySlipRepository, IPayPeriodRepository payPeriodRepository)
+        public PaySlipService(IPaySlipRepository paySlipRepository, IPayPeriodRepository payPeriodRepository, IPayItemRepository payItemRepository)
         {
             _paySlipRepository = paySlipRepository;
             _payPeriodRepository = payPeriodRepository;
+            _payItemRepository = payItemRepository;
         }
 
         public Guid Add(PaySlipCreateModel model)
@@ -28,8 +30,20 @@ namespace EPayroll_BE.Services
                 Status = "Draft",
                 CreatedDate = DateTime.Now
             };
-
             _paySlipRepository.Add(paySlip);
+
+            for (int i = 0; i < model.PayItems.Count; i++)
+            {
+                _payItemRepository.Add(new PayItem { 
+                    Amount = model.PayItems[i].Amount,
+                    HourRate = model.PayItems[i].HourRate,
+                    IsTemplate = false,
+                    PaySlipId = paySlip.Id,
+                    PayTypeId = model.PayItems[i].PayTypeId,
+                    TotalHour = model.PayItems[i].TotalHour
+                });
+            }
+
             _paySlipRepository.SaveChanges();
 
             return paySlip.Id;
