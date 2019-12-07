@@ -15,10 +15,21 @@ namespace EPayroll_BE.ViewModels
         public PaySlipViewModel PaySlip { get; set; }
         public PayTypeViewModel PayType { get; set; }
     }
-    public class PayItemsViewModel
+
+    public class PayItemDetailViewModel
     {
-        public IList<PayItemViewModel> PayItemsInMonth { get; set; }
-        public IList<PayItemViewModel> PayItemsAllowance { get; set; }
+        public float Amount { get; set; }
+        public int TotalHour { get; set; }
+        public float HourRate { get; set; }
+
+        public string PayTypeName { get; set; }
+    }
+
+    public class GroupPayItemViewModel
+    {
+        public string PayTypeCategoryName { get; set; }
+
+        public IList<PayItemDetailViewModel> PayItems { get; set; }
     }
 
     public class PayItemCreateModel

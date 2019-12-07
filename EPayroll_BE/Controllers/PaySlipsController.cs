@@ -40,6 +40,24 @@ namespace EPayroll_BE.Controllers
                 return StatusCode(500);
             }
         }
+        //
+        [HttpGet("{paySlipId}")]
+        [SwaggerResponse(200, typeof(PaySlipDetailViewModel), Description = "Return a pay slip by paySlipId")]
+        [SwaggerResponse(404, null, Description = "The paySlipId's id not exist")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GetById([FromRoute]Guid paySlipId)
+        {
+            try
+            {
+                PaySlipDetailViewModel result = _paySlipService.GetById(paySlipId);
+                if (result == null) return NotFound();
+                else return Ok(result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
         #endregion
 
         #region Post

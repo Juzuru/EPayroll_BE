@@ -159,101 +159,101 @@ namespace EPayroll_BE.Services
             return null;
         }
 
-        public PayItemsViewModel GetByPaySlipId(Guid paySlipId)
-        {
+        //public PayItemsViewModel GetByPaySlipId(Guid paySlipId)
+        //{
 
-            IList<PayItem> list = _payItemRepository
-                .Get(_payItem => _payItem.PaySlipId.Equals(paySlipId))
-                .ToList();
+        //    IList<PayItem> list = _payItemRepository
+        //        .Get(_payItem => _payItem.PaySlipId.Equals(paySlipId))
+        //        .ToList();
 
 
-            if (list != null)
-            {
+        //    if (list != null)
+        //    {
 
-                IList<PayItemViewModel> payItemsInMonth = new List<PayItemViewModel>();
-                IList<PayItemViewModel> payItemsAllowance = new List<PayItemViewModel>();
+        //        IList<PayItemViewModel> payItemsInMonth = new List<PayItemViewModel>();
+        //        IList<PayItemViewModel> payItemsAllowance = new List<PayItemViewModel>();
 
-                foreach (var item in list)
-                {
-                    PaySlip paySlip = _paySlipRepository.GetById(item.PaySlipId);
-                    Employee employee = _employeeRepository.GetById(paySlip.EmployeeId);
+        //        foreach (var item in list)
+        //        {
+        //            PaySlip paySlip = _paySlipRepository.GetById(item.PaySlipId);
+        //            Employee employee = _employeeRepository.GetById(paySlip.EmployeeId);
 
-                    PayType payType = _payTypeRepository.GetById(item.PayTypeId);
-                    PayTypeCategory payTypeCategory = _payTypeCategoryRepository.GetById(payType.PayTypeCategoryId);
-                    string compare = "PHỤ CẤP";
-                    if (payTypeCategory.Name.ToUpper().Contains(compare.ToUpper()))
-                    {
-                        payItemsAllowance.Add(new PayItemViewModel
-                        {
-                            Id = item.Id,
-                            Amount = item.Amount,
-                            IsTemplate = item.IsTemplate,
-                            PaySlip = new PaySlipViewModel
-                            {
-                                Id = paySlip.Id,
-                                Amount = paySlip.Amount,
-                                PaySlipCode = paySlip.PaySlipCode,
-                                Status = paySlip.Status,
-                                Employee = new EmployeeViewModel
-                                {
-                                    Id = employee.Id,
-                                    Name = employee.Name
-                                }
-                            },
-                            PayType = new PayTypeViewModel
-                            {
-                                Id = payType.Id,
-                                Name = payType.Name,
-                                PayTypeCategory = new PayTypeCategoryViewModel
-                                {
-                                    Id = payTypeCategory.Id,
-                                    Name = payTypeCategory.Name
-                                }
-                            }
-                        });
-                    }
-                    else
-                    {
-                        payItemsInMonth.Add(new PayItemViewModel
-                        {
-                            Id = item.Id,
-                            Amount = item.Amount,
-                            IsTemplate = item.IsTemplate,
-                            PaySlip = new PaySlipViewModel
-                            {
-                                Id = paySlip.Id,
-                                Amount = paySlip.Amount,
-                                PaySlipCode = paySlip.PaySlipCode,
-                                Status = paySlip.Status,
-                                Employee = new EmployeeViewModel
-                                {
-                                    Id = employee.Id,
-                                    Name = employee.Name
-                                }
-                            },
-                            PayType = new PayTypeViewModel
-                            {
-                                Id = payType.Id,
-                                Name = payType.Name,
-                                PayTypeCategory = new PayTypeCategoryViewModel
-                                {
-                                    Id = payTypeCategory.Id,
-                                    Name = payTypeCategory.Name
-                                }
-                            }
-                        });
-                    }
-                }
+        //            PayType payType = _payTypeRepository.GetById(item.PayTypeId);
+        //            PayTypeCategory payTypeCategory = _payTypeCategoryRepository.GetById(payType.PayTypeCategoryId);
+        //            string compare = "PHỤ CẤP";
+        //            if (payTypeCategory.Name.ToUpper().Contains(compare.ToUpper()))
+        //            {
+        //                payItemsAllowance.Add(new PayItemViewModel
+        //                {
+        //                    Id = item.Id,
+        //                    Amount = item.Amount,
+        //                    IsTemplate = item.IsTemplate,
+        //                    PaySlip = new PaySlipViewModel
+        //                    {
+        //                        Id = paySlip.Id,
+        //                        Amount = paySlip.Amount,
+        //                        PaySlipCode = paySlip.PaySlipCode,
+        //                        Status = paySlip.Status,
+        //                        Employee = new EmployeeViewModel
+        //                        {
+        //                            Id = employee.Id,
+        //                            Name = employee.Name
+        //                        }
+        //                    },
+        //                    PayType = new PayTypeViewModel
+        //                    {
+        //                        Id = payType.Id,
+        //                        Name = payType.Name,
+        //                        PayTypeCategory = new PayTypeCategoryViewModel
+        //                        {
+        //                            Id = payTypeCategory.Id,
+        //                            Name = payTypeCategory.Name
+        //                        }
+        //                    }
+        //                });
+        //            }
+        //            else
+        //            {
+        //                payItemsInMonth.Add(new PayItemViewModel
+        //                {
+        //                    Id = item.Id,
+        //                    Amount = item.Amount,
+        //                    IsTemplate = item.IsTemplate,
+        //                    PaySlip = new PaySlipViewModel
+        //                    {
+        //                        Id = paySlip.Id,
+        //                        Amount = paySlip.Amount,
+        //                        PaySlipCode = paySlip.PaySlipCode,
+        //                        Status = paySlip.Status,
+        //                        Employee = new EmployeeViewModel
+        //                        {
+        //                            Id = employee.Id,
+        //                            Name = employee.Name
+        //                        }
+        //                    },
+        //                    PayType = new PayTypeViewModel
+        //                    {
+        //                        Id = payType.Id,
+        //                        Name = payType.Name,
+        //                        PayTypeCategory = new PayTypeCategoryViewModel
+        //                        {
+        //                            Id = payTypeCategory.Id,
+        //                            Name = payTypeCategory.Name
+        //                        }
+        //                    }
+        //                });
+        //            }
+        //        }
 
-                return new PayItemsViewModel
-                {
-                    PayItemsInMonth = payItemsInMonth,
-                    PayItemsAllowance = payItemsAllowance
-                };
-            }
+        //        return new PayItemsViewModel
+        //        {
+        //            PayItemsInMonth = payItemsInMonth,
+        //            PayItemsAllowance = payItemsAllowance
+        //        };
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
     }
 
     public interface IPayItemService
@@ -262,6 +262,6 @@ namespace EPayroll_BE.Services
         IList<PayItemViewModel> GetAll();
         PayItemViewModel GetById(Guid payItemId);
         Guid Add(PayItemCreateModel model, bool isTemplate);
-        PayItemsViewModel GetByPaySlipId(Guid paySlipId);
+        //PayItemsViewModel GetByPaySlipId(Guid paySlipId);
     }
 }

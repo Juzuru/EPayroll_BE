@@ -26,4 +26,16 @@ namespace EPayroll_BE.ViewModels
         [Required]
         public Guid EmployeeId { get; set; }
     }
+
+    public class PaySlipDetailViewModel
+    {
+        public string PaySlipCode { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string Status { get; set; }
+        public float Amount { get; set; }
+
+        public PayPeriodDetailViewModel PayPeriod { get; set; }
+
+        public IList<GroupPayItemViewModel> GroupPayItems { get; set; }
+    }
 }
