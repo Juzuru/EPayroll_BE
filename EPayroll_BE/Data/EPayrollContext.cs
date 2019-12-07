@@ -20,7 +20,6 @@ namespace EPayroll_BE.Data
         public virtual DbSet<SalaryMode> SalaryMode { get; set; }
         public virtual DbSet<SalaryShift> SalaryShift { get; set; }
         public virtual DbSet<SalaryTable> SalaryTable { get; set; }
-        public virtual DbSet<SalaryTablePosition> SalaryTablePosition { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

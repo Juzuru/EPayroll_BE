@@ -40,11 +40,8 @@ namespace EPayroll_BE.ViewModels
         [Required]
         public string UserUID { get; set; }
 
-        [Required]
         public Guid PositionId { get; set; }
-        [Required]
         public Guid SalaryModeId { get; set; }
-        [Required]
         public Guid SalaryLevelId { get; set; }
     }
 

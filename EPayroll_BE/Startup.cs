@@ -66,7 +66,6 @@ namespace EPayroll_BE
             services.AddScoped<ISalaryLevelRepository, SalaryLevelRepository>();
             services.AddScoped<ISalaryModeRepository, SalaryModeRepository>();
             services.AddScoped<ISalaryShiftRepository, SalaryShiftRepository>();
-            services.AddScoped<ISalaryTablePositionRepository, SalaryTablePositionRepository>();
             services.AddScoped<ISalaryTableRepository, SalaryTableRepository>();
             #endregion
 
@@ -83,7 +82,6 @@ namespace EPayroll_BE
             services.AddScoped<ISalaryLevelService, SalaryLevelService>();
             services.AddScoped<ISalaryModeService, SalaryModeService>();
             services.AddScoped<ISalaryShiftService, SalaryShiftService>();
-            services.AddScoped<ISalaryTablePositionService, SalaryTablePositionService>();
             services.AddScoped<ISalaryTableService, SalaryTableService>();
             #endregion
 

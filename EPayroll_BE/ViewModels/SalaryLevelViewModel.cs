@@ -23,7 +23,7 @@ namespace EPayroll_BE.ViewModels
         [Required]
         public string Condition { get; set; }
 
-        [Required]
         public Guid SalaryTableId { get; set; }
+        public Guid PositionId { get; set; }
     }
 }

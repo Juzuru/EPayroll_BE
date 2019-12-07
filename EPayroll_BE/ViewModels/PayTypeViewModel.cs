@@ -15,7 +15,6 @@ namespace EPayroll_BE.ViewModels
         [Required]
         public string Name { get; set; }
 
-        [Required]
         public Guid PayTypeCategoryId { get; set; }
     }
 }

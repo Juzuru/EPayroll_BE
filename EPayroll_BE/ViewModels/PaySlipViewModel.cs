@@ -16,12 +16,16 @@ namespace EPayroll_BE.ViewModels
 
     public class PaySlipCreateModel
     {
-        [Required]
-        public string PaySlipCode { get; set; }
+        public Guid PayPeriodId { get; set; }
+        public Guid EmployeeId { get; set; }
 
         [Required]
-        public Guid PayPeriodId { get; set; }
-        [Required]
-        public Guid EmployeeId { get; set; }
+        public IList<PayItemCreateModel> PayItems { get; set; }
+    }
+
+    public class PaySlipTemplate
+    {
+        public IList<PayItemTemplate> PayItemTemplates { get; set; }
+        public IList<SalaryShiftTemplateViewModel> SalaryShiftTemplates { get; set; }
     }
 }

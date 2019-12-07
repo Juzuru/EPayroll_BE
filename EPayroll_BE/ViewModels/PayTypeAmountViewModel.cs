@@ -15,9 +15,7 @@ namespace EPayroll_BE.ViewModels
         [Required]
         public float Amount { get; set; }
 
-        [Required]
         public Guid SalaryLevelId { get; set; }
-        [Required]
         public Guid PayTypeId { get; set; }
     }
 }
