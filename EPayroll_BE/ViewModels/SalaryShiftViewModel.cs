@@ -24,7 +24,15 @@ namespace EPayroll_BE.ViewModels
         [Required]
         public DateTime Date { get; set; }
 
-        [Required]
         public Guid PaySlipId { get; set; }
+    }
+
+    public class SalaryShiftTemplateViewModel
+    {
+        public Guid PayTypeId { get; set; }
+        public string PayTypeName { get; set; }
+        public float PayTypeAmount { get; set; }
+
+        public int Hour { get; set; }
     }
 }

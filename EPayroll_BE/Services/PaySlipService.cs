@@ -33,7 +33,6 @@ namespace EPayroll_BE.Services
         {
             PaySlip paySlip = new PaySlip
             {
-                PaySlipCode = model.PaySlipCode,
                 PayPeriodId = model.PayPeriodId,
                 EmployeeId = model.EmployeeId,
                 Status = "Draft",

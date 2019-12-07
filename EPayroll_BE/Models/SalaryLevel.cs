@@ -15,8 +15,11 @@ namespace EPayroll_BE.Models
         public string Condition { get; set; }
 
         public Guid SalaryTableId { get; set; }
+        public Guid PositionId { get; set; }
 
         [ForeignKey("SalaryTableId")]
         public SalaryTable SalaryTable { get; set; }
+        [ForeignKey("PositionId")]
+        public Position Position { get; set; }
     }
 }
