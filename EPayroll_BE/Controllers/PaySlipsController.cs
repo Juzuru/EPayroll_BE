@@ -76,19 +76,40 @@ namespace EPayroll_BE.Controllers
                 return StatusCode(500);
             }
         }
-        // CreateWithPositionId
-        [HttpPost("/CreateWithPositionId")]
-        [SwaggerResponse(201, typeof(PaySlipCreateResult), Description = "Return Id of created pay period and position")]
-        [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
-        [SwaggerResponse(404, null, Description = "The positionId's id not exist")]
+
+        [HttpPost("pay-salary")]
+        [SwaggerResponse(200, null, Description = "Successful implemented")]
+        [SwaggerResponse(400, null, Description = "Return error employee IDs")]
         [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult AddDraft([FromBody]PayPeriodCreateModel model)
+        [SwaggerResponse(502, null, Description = "The Employee Shift API not available")]
+        public ActionResult PaySalary([FromBody]PaySlipPaySalaryModel model)
         {
             try
             {
-                PaySlipCreateResult result = _paySlipService.AddDraft(model);
-                if (result == null) return NotFound();
-                else return Ok(result);
+                IList<Guid> errorIds = _paySlipService.PaySalary(model);
+                if (errorIds == null) return StatusCode(502);
+                else if (errorIds.Count == 0) return Ok();
+                return StatusCode(400, errorIds);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost("create-draft")]
+        [SwaggerResponse(200, null, Description = "Create drafts successful")]
+        [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
+        [SwaggerResponse(404, null, Description = "The position or pay period ID not exist")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult AddDraft([FromBody]PaySlipDraftCreateModel model)
+        {
+            try
+            {
+                int result = _paySlipService.AddDraft(model);
+                if (result == -1) return NotFound("Invalid position ID");
+                if (result == -2) return NotFound("Invalid pay period ID");
+                return Ok();
             }
             catch (Exception)
             {

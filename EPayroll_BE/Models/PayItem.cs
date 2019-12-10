@@ -9,10 +9,9 @@ namespace EPayroll_BE.Models
 {
     public class PayItem : ModelBase
     {
-        public float Amount { get; set; }
+        public long Amount { get; set; }
         public int TotalHour { get; set; }
-        public float HourRate { get; set; }
-        public bool IsTemplate { get; set; }
+        public long HourRate { get; set; }
 
         public Guid PaySlipId { get; set; }
         public Guid PayTypeId { get; set; }
