@@ -13,7 +13,6 @@ namespace EPayroll_BE.Services
         private readonly IPayItemRepository _payItemRepository;
         private readonly IPaySlipRepository _paySlipRepository;
         private readonly IPayTypeRepository _payTypeRepository;
-        private readonly IFormularRepository _formularRepository;
         private readonly IEmployeeRepository _employeeRepository;
 
         private readonly IPayPeriodRepository _payPeriodRepository;
@@ -23,7 +22,6 @@ namespace EPayroll_BE.Services
         public PayItemService(IPayItemRepository payItemRepository,
             IPaySlipRepository paySlipRepository,
             IPayTypeRepository payTypeRepository,
-            IFormularRepository formularRepository,
             IPayTypeCategoryRepository payTypeCategoryRepository,
             IPayPeriodRepository payPeriodRepository,
             IEmployeeRepository employeeRepository)
