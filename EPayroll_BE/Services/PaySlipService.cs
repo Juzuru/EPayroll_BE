@@ -99,7 +99,7 @@ namespace EPayroll_BE.Services
                         IList<PayTypeAmount> payTypeAmounts = _payTypeAmountRepository
                             .Get(_ => _.SalaryLevelId.Equals(employee.SalaryLevelId));
 
-                        if (AddPayItem(paySlip.Id, originalHour, overTimeHour, payTypeAmounts, out float totalAmount))
+                        if (AddPayItem(paySlip.Id, originalHour, overTimeHour, payTypeAmounts, out long totalAmount))
                         {
                             if (UpdatePayslip(paySlip, totalAmount))
                             {
@@ -323,7 +323,7 @@ namespace EPayroll_BE.Services
                 return false;
             }
         }
-        private bool AddPayItem(Guid payslipId, int originalHour, int overTimeHour, IList<PayTypeAmount> payTypeAmounts, out float totalAmount)
+        private bool AddPayItem(Guid payslipId, int originalHour, int overTimeHour, IList<PayTypeAmount> payTypeAmounts, out long totalAmount)
         {
             totalAmount = 0;
             try
@@ -374,7 +374,7 @@ namespace EPayroll_BE.Services
                 return false;
             }
         }
-        private bool UpdatePayslip(PaySlip paySlip, float totalAmount)
+        private bool UpdatePayslip(PaySlip paySlip, long totalAmount)
         {
             try
             {

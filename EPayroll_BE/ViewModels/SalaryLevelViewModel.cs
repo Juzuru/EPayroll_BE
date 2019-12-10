@@ -24,7 +24,7 @@ namespace EPayroll_BE.ViewModels
         [Required]
         public int Order { get; set; }
         [Required]
-        public float Factor { get; set; }
+        public double Factor { get; set; }
         [Required]
         public string Condition { get; set; }
 
