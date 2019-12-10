@@ -24,7 +24,6 @@ namespace EPayroll_BE.Services
                 Amount = model.Amount,
                 PaySlipId = model.PaySlipId,
                 PayTypeId = model.PayTypeId,
-                IsTemplate = isTemplate,
                 HourRate = model.HourRate,
                 TotalHour = model.TotalHour
             };

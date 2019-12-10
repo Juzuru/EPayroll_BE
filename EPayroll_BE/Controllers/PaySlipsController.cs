@@ -59,15 +59,19 @@ namespace EPayroll_BE.Controllers
             }
         }
 
-        [HttpPost]
-        [SwaggerResponse(200, null, Description = "All payslips have been fully genarated")]
+        [HttpPost("pay-salary")]
+        [SwaggerResponse(200, null, Description = "Successful implemented")]
+        [SwaggerResponse(400, null, Description = "Return error employee IDs")]
         [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult GenerateFullPayslip([FromBody]Guid[] employeeIds)
+        [SwaggerResponse(502, null, Description = "The Employee Shift API not available")]
+        public ActionResult FillAll([FromBody]PaySlipGenerateFullModel model)
         {
             try
             {
-                _paySlipService.GenerateFullPayslip(employeeIds);
-                return Ok();
+                IList<Guid> errorIds = _paySlipService.FillAll(model);
+                if (errorIds == null) return StatusCode(502);
+                else if (errorIds.Count == 0) return Ok();
+                return StatusCode(400, errorIds);
             }
             catch (Exception)
             {

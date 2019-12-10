@@ -36,7 +36,8 @@ namespace EPayroll_BE.Services
                 SalaryLevelId = model.SalaryLevelId,
                 SalaryModeId = model.SalaryModeId,
                 Email = model.Email,
-                UserUID = model.UserUID
+                UserUID = model.UserUID,
+                EsapiEmployeeId = model.EsapiEmployeeId
             };
 
             _employeeRepository.Add(employee);

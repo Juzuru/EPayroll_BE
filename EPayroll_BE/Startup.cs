@@ -15,6 +15,7 @@ using System.Text;
 using System;
 using EPayroll_BE.Utilities;
 using EPayroll_BE.Services;
+using EPayroll_BE.Services.Base;
 
 namespace EPayroll_BE
 {
@@ -49,7 +50,7 @@ namespace EPayroll_BE
                 {
                     cfg.RequireHttpsMetadata = false;
                     cfg.SaveToken = true;
-                    cfg.TokenValidationParameters = JWTUtilities.tokenValidationParameters;
+                    cfg.TokenValidationParameters = JWTUtility.tokenValidationParameters;
                 });
             #endregion
             
@@ -69,6 +70,7 @@ namespace EPayroll_BE
             #endregion
 
             #region Add Services
+            services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IPayItemService, PayItemService>();
             services.AddScoped<IPayPeriodService, PayPeriodService>();

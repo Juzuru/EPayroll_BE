@@ -33,12 +33,13 @@ namespace EPayroll_BE.ViewModels
         public int Age { get; set; }
         [Required]
         public bool Gender { get; set; }
-        [Required]
         public string IdentifyNumber { get; set; }
         [Required]
         public string Email { get; set; }
         [Required]
         public string UserUID { get; set; }
+        [Required]
+        public int EsapiEmployeeId { get; set; }
 
         public Guid PositionId { get; set; }
         public Guid SalaryModeId { get; set; }
