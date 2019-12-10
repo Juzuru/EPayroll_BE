@@ -26,6 +26,8 @@ namespace EPayroll_BE.ViewModels
         public DateTime EndDate { get; set; }
         [Required]
         public DateTime PayDate { get; set; }
+        [Required]
+        public Guid PositionId { get; set; }
     }
     public class PayPeriodDetailViewModel
     {

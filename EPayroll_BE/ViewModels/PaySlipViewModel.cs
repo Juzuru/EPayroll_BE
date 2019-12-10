@@ -15,6 +15,7 @@ namespace EPayroll_BE.ViewModels
         public PayPeriodViewModel PayPeriod { get; set; }
         public EmployeeViewModel Employee { get; set; }
     }
+   
 
     public class PaySlipCreateModel
     {
@@ -30,7 +31,11 @@ namespace EPayroll_BE.ViewModels
         public IList<Guid> EmployeeIds { get; set; }
         public Guid PayPeriodId { get; set; }
     }
-
+    public class PaySlipCreateResult
+    {
+        public Guid PayPeriodId { get; set; }
+        public PositionViewModel Position { get; set; }
+    }
     public class PaySlipDetailViewModel
     {
         public string PaySlipCode { get; set; }

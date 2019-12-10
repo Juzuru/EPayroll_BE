@@ -21,8 +21,9 @@ namespace EPayroll_BE.Services
         private readonly IPayTypeAmountRepository _payTypeAmountRepository;
         private readonly IPayTypeCategoryRepository _payTypeCategoryRepository;
         private readonly IPayTypeRepository _payTypeRepository;
+        private readonly IPositionRepository _positionRepository;
 
-        public PaySlipService(IPaySlipRepository paySlipRepository, IPayPeriodRepository payPeriodRepository, IPayItemRepository payItemRepository, IRequestService requestService, IEmployeeRepository employeeRepository, ISalaryShiftRepository salaryShiftRepository, IPayTypeAmountRepository payTypeAmountRepository, IPayTypeCategoryRepository payTypeCategoryRepository, IPayTypeRepository payTypeRepository)
+        public PaySlipService(IPaySlipRepository paySlipRepository, IPayPeriodRepository payPeriodRepository, IPayItemRepository payItemRepository, IRequestService requestService, IEmployeeRepository employeeRepository, ISalaryShiftRepository salaryShiftRepository, IPayTypeAmountRepository payTypeAmountRepository, IPayTypeCategoryRepository payTypeCategoryRepository, IPayTypeRepository payTypeRepository, IPositionRepository positionRepository)
         {
             _paySlipRepository = paySlipRepository;
             _payPeriodRepository = payPeriodRepository;
@@ -33,6 +34,7 @@ namespace EPayroll_BE.Services
             _payTypeAmountRepository = payTypeAmountRepository;
             _payTypeCategoryRepository = payTypeCategoryRepository;
             _payTypeRepository = payTypeRepository;
+            _positionRepository = positionRepository;
         }
 
         public Guid Add(PaySlipCreateModel model)
@@ -111,6 +113,51 @@ namespace EPayroll_BE.Services
             }
 
             return errorIds;
+        }
+
+        public PaySlipCreateResult AddDraft(PayPeriodCreateModel model)
+        {
+            Position position = _positionRepository.GetById(model.PositionId);
+            if (position != null)
+            {
+
+                PayPeriod payPeriod = new PayPeriod
+                {
+                    Name = model.Name,
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    PayDate = model.PayDate,
+                };
+                _payPeriodRepository.Add(payPeriod);
+                _payPeriodRepository.SaveChanges();
+
+                IList<Employee> employees = _employeeRepository.GetAll().
+                    Where(_emp => _emp.PositionId.Equals(model.PositionId)).ToList();
+
+                foreach (var item in employees)
+                {
+                    PaySlip paySlip = new PaySlip
+                    {
+                        PayPeriodId = payPeriod.Id,
+                        EmployeeId = item.Id,
+                        Status = "Draft",
+                        CreatedDate = DateTime.Now,
+                    };
+                    _paySlipRepository.Add(paySlip);
+                    _paySlipRepository.SaveChanges();
+                }
+
+                return new PaySlipCreateResult
+                {
+                    PayPeriodId = payPeriod.Id,
+                    Position = new PositionViewModel
+                    {
+                        Id = position.Id,
+                        Name = position.Name
+                    }
+                };
+            }
+            return null;
         }
 
         public IList<PaySlipViewModel> GetAll(Guid employeeId)
@@ -349,5 +396,6 @@ namespace EPayroll_BE.Services
         IList<Guid> FillAll(PaySlipGenerateFullModel model);
         IList<PaySlipViewModel> GetAll(Guid employeeId);
         PaySlipDetailViewModel GetById(Guid paySlipId);
+        PaySlipCreateResult AddDraft(PayPeriodCreateModel model);
     }
 }
