@@ -95,7 +95,7 @@ namespace EPayroll_BE.Controllers
 
                 return Ok(new EmployeeAuthorizedModel { 
                     Id = employeeId,
-                    Token = JWTUtilities.GenerateJwtToken(model.UserUID, new Claim[] {
+                    Token = JWTUtility.GenerateJwtToken(model.UserUID, new Claim[] {
                         new Claim("EmployeeId", employeeId.ToString()),
                     }),
                     TokenType = "Bearer"
