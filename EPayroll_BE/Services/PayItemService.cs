@@ -74,7 +74,6 @@ namespace EPayroll_BE.Services
                 {
                     Id = list[i].Id,
                     Amount = list[i].Amount,
-                    IsTemplate = list[i].IsTemplate,
 
                     PaySlip = new PaySlipViewModel
                     {
@@ -125,7 +124,6 @@ namespace EPayroll_BE.Services
                 {
                     Id = payItem.Id,
                     Amount = payItem.Amount,
-                    IsTemplate = payItem.IsTemplate,
                     PaySlip = new PaySlipViewModel
                     {
                         Id = paySlip.Id,
