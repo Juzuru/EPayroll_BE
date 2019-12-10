@@ -26,7 +26,7 @@ namespace EPayroll_BE.ViewModels
         public IList<PayItemCreateModel> PayItems { get; set; }
     }
 
-    public class PaySlipGenerateFullModel
+    public class PaySlipPaySalaryModel
     {
         public IList<Guid> EmployeeIds { get; set; }
         public Guid PayPeriodId { get; set; }

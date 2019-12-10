@@ -82,7 +82,7 @@ namespace EPayroll_BE.Controllers
         [SwaggerResponse(400, null, Description = "Return error employee IDs")]
         [SwaggerResponse(500, null, Description = "Server error")]
         [SwaggerResponse(502, null, Description = "The Employee Shift API not available")]
-        public ActionResult PaySalary([FromBody]PaySlipGenerateFullModel model)
+        public ActionResult PaySalary([FromBody]PaySlipPaySalaryModel model)
         {
             try
             {
