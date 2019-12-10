@@ -58,7 +58,7 @@ namespace EPayroll_BE.Services
             return paySlip.Id;
         }
 
-        public IList<Guid> PaySalary(PaySlipGenerateFullModel model)
+        public IList<Guid> PaySalary(PaySlipPaySalaryModel model)
         {
             IList<Guid> errorIds = new List<Guid>();
 
@@ -279,7 +279,7 @@ namespace EPayroll_BE.Services
     public interface IPaySlipService
     {
         Guid Add(PaySlipCreateModel model);
-        IList<Guid> PaySalary(PaySlipGenerateFullModel model);
+        IList<Guid> PaySalary(PaySlipPaySalaryModel model);
         IList<PaySlipViewModel> GetAll(Guid employeeId);
     }
 }
