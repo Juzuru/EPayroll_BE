@@ -62,7 +62,7 @@ namespace EPayroll_BE.Controllers
 
         #region Post
         [HttpPost]
-        [SwaggerResponse(201, typeof(string), Description = "Return Id of created paySlip")]
+        [SwaggerResponse(201, typeof(Guid), Description = "Return Id of created paySlip")]
         [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
         [SwaggerResponse(500, null, Description = "Server error")]
         public ActionResult Add([FromBody]PaySlipCreateModel model)
@@ -70,6 +70,26 @@ namespace EPayroll_BE.Controllers
             try
             {
                 return StatusCode(201, _paySlipService.Add(model));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost("pay-salary")]
+        [SwaggerResponse(200, null, Description = "Successful implemented")]
+        [SwaggerResponse(400, null, Description = "Return error employee IDs")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        [SwaggerResponse(502, null, Description = "The Employee Shift API not available")]
+        public ActionResult FillAll([FromBody]PaySlipGenerateFullModel model)
+        {
+            try
+            {
+                IList<Guid> errorIds = _paySlipService.FillAll(model);
+                if (errorIds == null) return StatusCode(502);
+                else if (errorIds.Count == 0) return Ok();
+                return StatusCode(400, errorIds);
             }
             catch (Exception)
             {

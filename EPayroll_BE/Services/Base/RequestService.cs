@@ -10,12 +10,16 @@ namespace EPayroll_BE.Services.Base
 {
     public class RequestService : IRequestService
     {
-        public TResult Get<TResult>(string uri)
+        public TResult Get<TResult>(string uri, string token)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+                    }
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     using (var response = httpClient.GetAsync(new Uri(uri)).GetAwaiter().GetResult())
@@ -30,13 +34,16 @@ namespace EPayroll_BE.Services.Base
                 throw new HttpRequestException(e.Message);
             }
         }
-
-        public TResult Post<TResult>(string uri, object dataModel)
+        public TResult Post<TResult>(string uri, object dataModel, string token)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+                    }
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     StringContent stringContent = new StringContent(JsonConvert.SerializeObject(dataModel));
@@ -54,13 +61,16 @@ namespace EPayroll_BE.Services.Base
                 throw new HttpRequestException(e.Message);
             }
         }
-
-        public TResult Put<TResult>(string uri, object dataModel)
+        public TResult Put<TResult>(string uri, object dataModel, string token)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+                    }
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     StringContent stringContent = new StringContent(JsonConvert.SerializeObject(dataModel));
@@ -79,12 +89,16 @@ namespace EPayroll_BE.Services.Base
             }
         }
 
-        public TResult Delete<TResult>(string uri)
+        public TResult Delete<TResult>(string uri, string token)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+                    }
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                     using (var response = httpClient.DeleteAsync(new Uri(uri)).GetAwaiter().GetResult())
@@ -103,9 +117,9 @@ namespace EPayroll_BE.Services.Base
 
     public interface IRequestService
     {
-        TResult Get<TResult>(string uri);
-        TResult Post<TResult>(string uri, object dataModel);
-        TResult Put<TResult>(string uri, object dataModel);
-        TResult Delete<TResult>(string uri);
+        TResult Get<TResult>(string uri, string token);
+        TResult Post<TResult>(string uri, object dataModel, string token);
+        TResult Put<TResult>(string uri, object dataModel, string token);
+        TResult Delete<TResult>(string uri, string token);
     }
 }
