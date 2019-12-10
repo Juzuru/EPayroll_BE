@@ -26,12 +26,12 @@ namespace EPayroll_BE.ViewModels
         public IList<PayItemCreateModel> PayItems { get; set; }
     }
 
-    public class PaySlipTemplate
+    public class PaySlipPaySalaryModel
     {
-        public IList<PayItemTemplate> PayItemTemplates { get; set; }
-        public IList<SalaryShiftTemplateViewModel> SalaryShiftTemplates { get; set; }
+        public IList<Guid> EmployeeIds { get; set; }
+        public Guid PayPeriodId { get; set; }
     }
-    
+
     public class PaySlipDetailViewModel
     {
         public string PaySlipCode { get; set; }
