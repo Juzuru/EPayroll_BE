@@ -64,11 +64,11 @@ namespace EPayroll_BE.Controllers
         [SwaggerResponse(400, null, Description = "Return error employee IDs")]
         [SwaggerResponse(500, null, Description = "Server error")]
         [SwaggerResponse(502, null, Description = "The Employee Shift API not available")]
-        public ActionResult FillAll([FromBody]PaySlipGenerateFullModel model)
+        public ActionResult PaySalary([FromBody]PaySlipGenerateFullModel model)
         {
             try
             {
-                IList<Guid> errorIds = _paySlipService.FillAll(model);
+                IList<Guid> errorIds = _paySlipService.PaySalary(model);
                 if (errorIds == null) return StatusCode(502);
                 else if (errorIds.Count == 0) return Ok();
                 return StatusCode(400, errorIds);
