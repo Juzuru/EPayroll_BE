@@ -1,6 +1,7 @@
 ﻿using EPayroll_BE.Models;
 using EPayroll_BE.Repositories;
 using EPayroll_BE.ViewModels;
+using EPayroll_BE.ViewModels.EmployeeShiftAPIViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,11 @@ namespace EPayroll_BE.Services
             return paySlip.Id;
         }
 
+        public void GenerateFullPayslip(Guid[] employeeIds)
+        {
+            
+        }
+
         public IList<PaySlipViewModel> GetAll(Guid employeeId)
         {
             IList<PaySlip> list = _paySlipRepository
@@ -76,6 +82,7 @@ namespace EPayroll_BE.Services
     public interface IPaySlipService
     {
         Guid Add(PaySlipCreateModel model);
+        void GenerateFullPayslip(Guid[] employeeIds);
         IList<PaySlipViewModel> GetAll(Guid employeeId);
     }
 }

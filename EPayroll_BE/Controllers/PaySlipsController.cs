@@ -58,6 +58,22 @@ namespace EPayroll_BE.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpPost]
+        [SwaggerResponse(200, null, Description = "All payslips have been fully genarated")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GenerateFullPayslip([FromBody]Guid[] employeeIds)
+        {
+            try
+            {
+                _paySlipService.GenerateFullPayslip(employeeIds);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
         #endregion
 
         #region Put
