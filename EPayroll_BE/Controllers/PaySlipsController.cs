@@ -97,19 +97,18 @@ namespace EPayroll_BE.Controllers
             }
         }
 
-        // CreateWithPositionId
-        [HttpPost("/CreateWithPositionId")]
-        [SwaggerResponse(201, typeof(PaySlipCreateResult), Description = "Return Id of created pay period and position")]
+        [HttpPost("create-draft")]
+        [SwaggerResponse(201, null, Description = "Drafts created")]
         [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
-        [SwaggerResponse(404, null, Description = "The positionId's id not exist")]
+        [SwaggerResponse(404, null, Description = "The position or pay period ID not exist")]
         [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult AddDraft([FromBody]PayPeriodCreateModel model)
+        public ActionResult AddDraft([FromBody]PaySlipDraftCreateModel model)
         {
             try
             {
-                PaySlipCreateResult result = _paySlipService.AddDraft(model);
-                if (result == null) return NotFound();
-                else return Ok(result);
+                int result = _paySlipService.AddDraft(model);
+                if (result < 0) return NotFound();
+                return Ok();
             }
             catch (Exception)
             {
