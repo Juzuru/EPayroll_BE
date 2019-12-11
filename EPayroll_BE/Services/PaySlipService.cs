@@ -21,8 +21,9 @@ namespace EPayroll_BE.Services
         private readonly ISalaryShiftRepository _salaryShiftRepository;
         private readonly IPayTypeAmountRepository _payTypeAmountRepository;
         private readonly IPayTypeCategoryRepository _payTypeCategoryRepository;
+        private readonly IPayTypeRepository _payTypeRepository;
 
-        public PaySlipService(IPaySlipRepository paySlipRepository, IPayPeriodRepository payPeriodRepository, IPayItemRepository payItemRepository, IRequestService requestService, IEmployeeRepository employeeRepository, ISalaryShiftRepository salaryShiftRepository, IPayTypeAmountRepository payTypeAmountRepository, IPayTypeCategoryRepository payTypeCategoryRepository)
+        public PaySlipService(IPaySlipRepository paySlipRepository, IPayPeriodRepository payPeriodRepository, IPayItemRepository payItemRepository, IRequestService requestService, IEmployeeRepository employeeRepository, ISalaryShiftRepository salaryShiftRepository, IPayTypeAmountRepository payTypeAmountRepository, IPayTypeCategoryRepository payTypeCategoryRepository, IPayTypeRepository payTypeRepository)
         {
             _paySlipRepository = paySlipRepository;
             _payPeriodRepository = payPeriodRepository;
@@ -32,6 +33,7 @@ namespace EPayroll_BE.Services
             _salaryShiftRepository = salaryShiftRepository;
             _payTypeAmountRepository = payTypeAmountRepository;
             _payTypeCategoryRepository = payTypeCategoryRepository;
+            _payTypeRepository = payTypeRepository;
         }
 
         public Guid Add(PaySlipCreateModel model)
