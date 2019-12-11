@@ -9,7 +9,7 @@ namespace EPayroll_BE.Models
 {
     public class PayTypeAmount : ModelBase
     {
-        public float Amount { get; set; }
+        public long Amount { get; set; }
 
         public Guid SalaryLevelId { get; set; }
         public Guid PayTypeId { get; set; }

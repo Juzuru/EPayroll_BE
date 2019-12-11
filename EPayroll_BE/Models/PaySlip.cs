@@ -12,7 +12,7 @@ namespace EPayroll_BE.Models
         public string PaySlipCode { get; set; }
         public DateTime CreatedDate { get; set; }
         public string Status { get; set; }
-        public float Amount { get; set; }
+        public long Amount { get; set; }
 
         public Guid PayPeriodId { get; set; }
         public Guid EmployeeId { get; set; }

@@ -11,9 +11,9 @@ namespace EPayroll_BE.ViewModels
         public Guid Id { get; set; }
         public string PaySlipCode { get; set; }
         public string Status { get; set; }
-        public float Amount { get; set; }
         public PayPeriodViewModel PayPeriod { get; set; }
         public EmployeeViewModel Employee { get; set; }
+        public long Amount { get; set; }
     }
    
 
