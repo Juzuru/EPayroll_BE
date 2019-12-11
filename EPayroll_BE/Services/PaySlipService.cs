@@ -252,7 +252,7 @@ namespace EPayroll_BE.Services
                             });
                         }
                     }
-                    else if (payTypeAmounts[i].PayTypeId.Equals(new Guid("1af87aee-e305-4dbd-cde7-08d77955b16e")))
+                    else if (payTypeAmounts[i].PayTypeId.Equals(new Guid("7a7ca25b-4af4-4175-5487-08d77db5b3ab")))
                     {
                         if (workHoursOfDay[2] != 0)
                         {
