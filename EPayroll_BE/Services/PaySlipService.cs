@@ -1,6 +1,7 @@
 ﻿using EPayroll_BE.Models;
 using EPayroll_BE.Repositories;
 using EPayroll_BE.Services.Base;
+using EPayroll_BE.Utilities;
 using EPayroll_BE.ViewModels;
 using EPayroll_BE.ViewModels.EmployeeShiftAPIViewModel;
 using System;
@@ -124,6 +125,8 @@ namespace EPayroll_BE.Services
                 {
                     IList<Employee> employees = _employeeRepository.GetAll().
                     Where(_emp => _emp.PositionId.Equals(model.PositionId)).ToList();
+                    string paySlipCode = payPeriod.EndDate.Month < 10 ? "0" + payPeriod.EndDate.Month : "" + payPeriod.EndDate.Month;
+                    paySlipCode += (payPeriod.EndDate.Year % 100).ToString();
 
                     foreach (var item in employees)
                     {
@@ -133,6 +136,7 @@ namespace EPayroll_BE.Services
                             EmployeeId = item.Id,
                             Status = "Draft",
                             CreatedDate = DateTime.Now,
+                            PaySlipCode = StringGenerationUtility.GenerateCode() + paySlipCode
                         };
                         _paySlipRepository.Add(paySlip);
                         _paySlipRepository.SaveChanges();

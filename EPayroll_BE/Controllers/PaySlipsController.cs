@@ -108,7 +108,7 @@ namespace EPayroll_BE.Controllers
             {
                 int result = _paySlipService.AddDraft(model);
                 if (result < 0) return NotFound();
-                return Ok();
+                return StatusCode(201);
             }
             catch (Exception)
             {

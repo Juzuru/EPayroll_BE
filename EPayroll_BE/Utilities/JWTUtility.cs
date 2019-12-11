@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EPayroll_BE.Utilities
 {
-    public static class JWTUtility
+    public class JWTUtility
     {
         private static string jwtKey = "Project_Employee_Payroll_Management_API_SWD";
         private static List<string> validateAudiences;
