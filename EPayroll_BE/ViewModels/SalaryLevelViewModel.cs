@@ -11,7 +11,7 @@ namespace EPayroll_BE.ViewModels
         public Guid Id { get; set; }
         public string Level { get; set; }
         public int Order { get; set; }
-        public float Factor { get; set; }
+        public double Factor { get; set; }
         public string Condition { get; set; }
 
         public SalaryTableViewModel SalaryTable { get; set; }
