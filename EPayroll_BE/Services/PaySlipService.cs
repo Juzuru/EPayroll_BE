@@ -62,30 +62,36 @@ namespace EPayroll_BE.Services
         {
             IList<Guid> errorIds = new List<Guid>();
 
-            string token = GetTokenFromESAI();
+            string token = GetTokenFromESAPI();
             if (token == null) return null;
 
             Employee employee;
             PayPeriod payPeriod = _payPeriodRepository.GetById(model.PayPeriodId);
             PaySlip paySlip;
+            DateTime createdDate = DateTime.Now;
 
             for (int i = 0; i < model.EmployeeIds.Count; i++)
             {
                 employee = _employeeRepository.GetById(model.EmployeeIds[i]);
 
                 var reports = GetAttendanceReport(token, employee.EsapiEmployeeId, payPeriod.StartDate.Date, payPeriod.EndDate.Date, out int[] workHoursOfDay);
-                paySlip = _paySlipRepository
-                    .Get(_ => _.PayPeriodId.Equals(payPeriod.Id)
-                            && _.EmployeeId.Equals(model.EmployeeIds[i]))
-                    .FirstOrDefault();
+                
+                if ((workHoursOfDay[0] + workHoursOfDay[1] + workHoursOfDay[2] + workHoursOfDay[3]) != 0)
+                {
+                    string paySlipCode = payPeriod.EndDate.Month < 10 ? "0" + payPeriod.EndDate.Month : "" + payPeriod.EndDate.Month;
+                    paySlipCode += (payPeriod.EndDate.Year % 100).ToString();
 
-                if ((workHoursOfDay[0] + workHoursOfDay[1] + workHoursOfDay[2] + workHoursOfDay[3]) == 0)
-                {
-                    _paySlipRepository.Delete(paySlip);
-                    _paySlipRepository.SaveChanges();
-                }
-                else
-                {
+                    paySlip = new PaySlip
+                    {
+                        Amount = 0,
+                        CreatedDate = createdDate,
+                        EmployeeId = model.EmployeeIds[i],
+                        PayPeriodId = model.PayPeriodId,
+                        Status = "Waiting",
+                        PaySlipCode = StringGenerationUtility.GenerateCode() + paySlipCode
+                    };
+                    _paySlipRepository.Add(paySlip);
+
                     if (AddReportToSalaryShift(reports, paySlip.Id))
                     {
                         IList<PayTypeAmount> payTypeAmounts = _payTypeAmountRepository
@@ -113,25 +119,96 @@ namespace EPayroll_BE.Services
             IList<PaySlip> list = _paySlipRepository
                 .Get(_playSlip => _playSlip.EmployeeId.Equals(employeeId))
                 .OrderByDescending(_paySlip => _paySlip.CreatedDate)
-                .Reverse().ToList();
+                .ToList();
 
             IList<PaySlipViewModel> result = new List<PaySlipViewModel>();
+            PayPeriod payPeriod;
 
             for (int i = 0; i < list.Count; i++)
             {
+                payPeriod = _payPeriodRepository.GetById(list[i].PayPeriodId);
+
                 result.Add(new PaySlipViewModel
                 {
                     Id = list[i].Id,
                     PaySlipCode = list[i].PaySlipCode,
                     Amount = list[i].Amount,
-                    Status = list[i].Status
+                    Status = list[i].Status,
+                    PayPeriod = new PayPeriodViewModel
+                    {
+                        Id = payPeriod.Id,
+                        Name = payPeriod.Name
+                    }
                 });
             }
 
             return result;
         }
 
-        private string GetTokenFromESAI()
+        public PaySlipDetailViewModel GetById(Guid paySlipId)
+        {
+            PaySlip paySlip = _paySlipRepository.GetById(paySlipId);
+
+            if (paySlip != null)
+            {
+                IList<PayTypeCategory> payTypeCategories = _payTypeCategoryRepository.GetAll().ToList();
+
+                //IList<PayItem> payItems = _payItemRepository.Get(_payItem => _payItem.PaySlipId.Equals(paySlipId)).ToList();
+
+                IList<GroupPayItemViewModel> groupPayItemViewModels =
+                    new List<GroupPayItemViewModel>();
+
+                PayPeriod payPeriod = _payPeriodRepository.GetById(paySlip.PayPeriodId);
+
+                foreach (var item in payTypeCategories)
+                {
+
+                    IList<PayItem> payItemList = _payItemRepository.Get(_payItem =>
+                       _payItem.PayType.PayTypeCategory.Name.Equals(item.Name)).
+                       Where(_payItem => _payItem.PaySlipId.Equals(paySlipId)).ToList();
+
+                    IList<PayItemDetailViewModel> payItemDetails = new List<PayItemDetailViewModel>();
+
+                    for (int i = 0; i < payItemList.Count; i++)
+                    {
+                        PayType payType = _payTypeRepository.GetById(payItemList[i].PayTypeId);
+                        payItemDetails.Add(new PayItemDetailViewModel
+                        {
+                            Amount = payItemList[i].Amount,
+                            HourRate = payItemList[i].HourRate,
+                            TotalHour = payItemList[i].TotalHour,
+                            PayTypeName = payType.Name
+                        });
+
+                    }
+                    groupPayItemViewModels.Add(new GroupPayItemViewModel
+                    {
+                        PayTypeCategoryName = item.Name,
+                        PayItems = payItemDetails
+                    });
+                }
+
+                return new PaySlipDetailViewModel
+                {
+                    Amount = paySlip.Amount,
+                    CreatedDate = paySlip.CreatedDate,
+                    PaySlipCode = paySlip.PaySlipCode,
+                    Status = paySlip.Status,
+                    PayPeriod = new PayPeriodDetailViewModel
+                    {
+                        Id = payPeriod.Id,
+                        Name = payPeriod.Name,
+                        StartDate = payPeriod.StartDate,
+                        EndDate = payPeriod.EndDate,
+                        PayDate = payPeriod.PayDate,
+                    },
+                    GroupPayItems = groupPayItemViewModels
+                };
+            }
+            return null;
+        }
+
+        private string GetTokenFromESAPI()
         {
             ESAPIAuthorizedModel authorizedModel = _requestService.Post<ESAPIAuthorizedModel>("http://employeeshiftapi.unicode.edu.vn/api/AspNetUsers/login", new ESAPILoginModel
             {
