@@ -18,6 +18,7 @@ namespace EPayroll_BE.Models
         public string IdentifyNumber { get; set; }
         public int EsapiEmployeeId { get; set; }
         public bool IsDeleted { get; set; }
+        public int EsapiEmployeeId { get; set; }
 
         public Guid PositionId { get; set; }
         public Guid SalaryModeId { get; set; }

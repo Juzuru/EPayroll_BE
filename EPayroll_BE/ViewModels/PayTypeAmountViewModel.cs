@@ -9,7 +9,7 @@ namespace EPayroll_BE.ViewModels
     public class PayTypeAmountViewModel
     {
         public Guid Id { get; set; }
-        public float Amount { get; set; }
+        public long Amount { get; set; }
 
 
         public SalaryLevelViewModel SalaryLevel { get; set; }
