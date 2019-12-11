@@ -73,14 +73,13 @@ namespace EPayroll_BE.Services
             {
                 employee = _employeeRepository.GetById(model.EmployeeIds[i]);
 
-                var reports = GetAttendanceReport(token, employee.EsapiEmployeeId, payPeriod.StartDate.Date, payPeriod.EndDate.Date, out int originalHour, out int overTimeHour);
+                var reports = GetAttendanceReport(token, employee.EsapiEmployeeId, payPeriod.StartDate.Date, payPeriod.EndDate.Date, out int[] workHoursOfDay);
                 paySlip = _paySlipRepository
                     .Get(_ => _.PayPeriodId.Equals(payPeriod.Id)
-                            && _.EmployeeId.Equals(model.EmployeeIds[i])
-                            && _.Status.Equals("Draft"))
+                            && _.EmployeeId.Equals(model.EmployeeIds[i]))
                     .FirstOrDefault();
 
-                if (originalHour == 0)
+                if ((workHoursOfDay[0] + workHoursOfDay[1] + workHoursOfDay[2] + workHoursOfDay[3]) == 0)
                 {
                     _paySlipRepository.Delete(paySlip);
                     _paySlipRepository.SaveChanges();
@@ -92,7 +91,7 @@ namespace EPayroll_BE.Services
                         IList<PayTypeAmount> payTypeAmounts = _payTypeAmountRepository
                             .Get(_ => _.SalaryLevelId.Equals(employee.SalaryLevelId));
 
-                        if (AddPayItem(paySlip.Id, originalHour, overTimeHour, payTypeAmounts, out float totalAmount))
+                        if (AddPayItem(paySlip.Id, workHoursOfDay, payTypeAmounts, reports.Count, out long totalAmount))
                         {
                             if (UpdatePayslip(paySlip, totalAmount))
                             {
@@ -148,12 +147,11 @@ namespace EPayroll_BE.Services
             }
             return null;
         }
-        private IList<ESAPIAttendanceReportViewModel> GetAttendanceReport(string token, int esapiEmployeeId, DateTime startDate, DateTime endDate, out int originalHour, out int overTimeHour)
+        private IList<ESAPIAttendanceReportViewModel> GetAttendanceReport(string token, int esapiEmployeeId, DateTime startDate, DateTime endDate, out int[] workHoursOfDay)
         {
             IList<ESAPIAttendanceReportViewModel> reports = new List<ESAPIAttendanceReportViewModel>();
             ESAPIAttendanceReportViewModel report;
-            originalHour = 0;
-            overTimeHour = 0;
+            workHoursOfDay = new int[] { 0, 0, 0, 0 };
             int Total_work_time;
             do
             {
@@ -162,7 +160,7 @@ namespace EPayroll_BE.Services
                         + esapiEmployeeId.ToString() 
                         + "&StartDate=" + startDate.ToString("yyyy/MM/dd") 
                         + "&EndDate=" + startDate.ToString("yyyy/MM/dd"), token);
-                Total_work_time = (int)Math.Round(Double.Parse(report.Total_work_time.Replace(" hours", "")));
+                Total_work_time = (int)Math.Round(double.Parse(report.Total_work_time.Replace(" hours", "")));
                 if (Total_work_time != 0)
                 {
                     if (Total_work_time > 8)
@@ -178,8 +176,17 @@ namespace EPayroll_BE.Services
                     report.Date = startDate;
                     reports.Add(report);
 
-                    originalHour += report.OriginalHour;
-                    overTimeHour += report.OverTime;
+                    if (startDate.Date.DayOfWeek.ToString().StartsWith("S"))
+                    {
+                        workHoursOfDay[2] += report.OriginalHour;
+                        workHoursOfDay[3] += report.OverTime;
+                    }
+                    else
+                    {
+                        workHoursOfDay[0] += report.OriginalHour;
+                        workHoursOfDay[1] += report.OverTime;
+                    }
+
                 }
                 
                 startDate = startDate.AddDays(1);
@@ -208,7 +215,7 @@ namespace EPayroll_BE.Services
                 return false;
             }
         }
-        private bool AddPayItem(Guid payslipId, int originalHour, int overTimeHour, IList<PayTypeAmount> payTypeAmounts, out float totalAmount)
+        private bool AddPayItem(Guid payslipId, int[] workHoursOfDay, IList<PayTypeAmount> payTypeAmounts, int numberOfDayWork, out long totalAmount)
         {
             totalAmount = 0;
             try
@@ -217,35 +224,73 @@ namespace EPayroll_BE.Services
                 {
                     if (payTypeAmounts[i].PayTypeId.Equals(new Guid("46c7d713-7eab-4cf1-b213-08d778b68b17")))
                     {
-                        totalAmount += originalHour * payTypeAmounts[i].Amount;
-                        _payItemRepository.Add(new PayItem
+                        if (workHoursOfDay[0] != 0)
                         {
-                            Amount = originalHour * payTypeAmounts[i].Amount,
-                            HourRate = payTypeAmounts[i].Amount,
-                            PaySlipId = payslipId,
-                            PayTypeId = payTypeAmounts[i].PayTypeId,
-                            TotalHour = originalHour
-                        });
+                            totalAmount += workHoursOfDay[0] * payTypeAmounts[i].Amount;
+                            _payItemRepository.Add(new PayItem
+                            {
+                                Amount = workHoursOfDay[0] * payTypeAmounts[i].Amount,
+                                HourRate = payTypeAmounts[i].Amount,
+                                PaySlipId = payslipId,
+                                PayTypeId = payTypeAmounts[i].PayTypeId,
+                                TotalHour = workHoursOfDay[0]
+                            });
+                        }
                     }
                     else if (payTypeAmounts[i].PayTypeId.Equals(new Guid("1af87aee-e305-4dbd-cde7-08d77955b16e")))
                     {
-                        totalAmount += overTimeHour * payTypeAmounts[i].Amount;
-                        _payItemRepository.Add(new PayItem
+                        if (workHoursOfDay[1] != 0)
                         {
-                            Amount = overTimeHour * payTypeAmounts[i].Amount,
-                            HourRate = payTypeAmounts[i].Amount,
-                            PaySlipId = payslipId,
-                            PayTypeId = payTypeAmounts[i].PayTypeId,
-                            TotalHour = overTimeHour
-                        });
+                            totalAmount += workHoursOfDay[1] * payTypeAmounts[i].Amount;
+                            _payItemRepository.Add(new PayItem
+                            {
+                                Amount = workHoursOfDay[1] * payTypeAmounts[i].Amount,
+                                HourRate = payTypeAmounts[i].Amount,
+                                PaySlipId = payslipId,
+                                PayTypeId = payTypeAmounts[i].PayTypeId,
+                                TotalHour = workHoursOfDay[1]
+                            });
+                        }
+                    }
+                    else if (payTypeAmounts[i].PayTypeId.Equals(new Guid("1af87aee-e305-4dbd-cde7-08d77955b16e")))
+                    {
+                        if (workHoursOfDay[2] != 0)
+                        {
+                            totalAmount += workHoursOfDay[2] * payTypeAmounts[i].Amount;
+                            _payItemRepository.Add(new PayItem
+                            {
+                                Amount = workHoursOfDay[2] * payTypeAmounts[i].Amount,
+                                HourRate = payTypeAmounts[i].Amount,
+                                PaySlipId = payslipId,
+                                PayTypeId = payTypeAmounts[i].PayTypeId,
+                                TotalHour = workHoursOfDay[2]
+                            });
+                        }
+                    }
+                    else if (payTypeAmounts[i].PayTypeId.Equals(new Guid("2b2a58aa-ee42-450a-537c-08d77db52365")))
+                    {
+                        if (workHoursOfDay[3] != 0)
+                        {
+                            totalAmount += workHoursOfDay[3] * payTypeAmounts[i].Amount;
+                            _payItemRepository.Add(new PayItem
+                            {
+                                Amount = workHoursOfDay[3] * payTypeAmounts[i].Amount,
+                                HourRate = payTypeAmounts[i].Amount,
+                                PaySlipId = payslipId,
+                                PayTypeId = payTypeAmounts[i].PayTypeId,
+                                TotalHour = workHoursOfDay[3]
+                            });
+                        }
                     }
                     else
                     {
-                        totalAmount += payTypeAmounts[i].Amount;
+                        long l = (payTypeAmounts[i].Amount * numberOfDayWork / 30);
+                        l -= l % 1000;
+                        totalAmount += l;
                         _payItemRepository.Add(new PayItem
                         {
-                            Amount = payTypeAmounts[i].Amount,
-                            HourRate = payTypeAmounts[i].Amount,
+                            Amount = l,
+                            HourRate = l,
                             PaySlipId = payslipId,
                             PayTypeId = payTypeAmounts[i].PayTypeId,
                             TotalHour = 1
@@ -259,7 +304,7 @@ namespace EPayroll_BE.Services
                 return false;
             }
         }
-        private bool UpdatePayslip(PaySlip paySlip, float totalAmount)
+        private bool UpdatePayslip(PaySlip paySlip, long totalAmount)
         {
             try
             {

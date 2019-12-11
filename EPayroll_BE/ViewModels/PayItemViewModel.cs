@@ -13,9 +13,9 @@ namespace EPayroll_BE.ViewModels
     public class PayItemCreateModel
     {
         [Required]
-        public float Amount { get; set; }
+        public long Amount { get; set; }
         public int TotalHour { get; set; }
-        public float HourRate { get; set; }
+        public long HourRate { get; set; }
 
         public Guid PaySlipId { get; set; }
         public Guid PayTypeId { get; set; }
