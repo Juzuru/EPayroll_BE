@@ -20,4 +20,11 @@ namespace EPayroll_BE.ViewModels
         public Guid PaySlipId { get; set; }
         public Guid PayTypeId { get; set; }
     }
+
+    public class GroupPayItemViewModel
+    {
+        public string PayTypeCategoryName { get; set; }
+
+        public IList<PayItemDetailViewModel> PayItems { get; set; }
+    }
 }
