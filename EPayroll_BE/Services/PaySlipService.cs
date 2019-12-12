@@ -119,6 +119,7 @@ namespace EPayroll_BE.Services
                             PaySlipCode = StringGenerationUtility.GenerateCode() + paySlipCode
                         };
                         _paySlipRepository.Add(paySlip);
+                        _paySlipRepository.SaveChanges();
 
                         if (AddReportToSalaryShift(reports, paySlip.Id))
                         {
@@ -127,26 +128,20 @@ namespace EPayroll_BE.Services
 
                             if (AddPayItem(paySlip.Id, workHoursOfDay, payTypeAmounts, reports.Count, out long totalAmount))
                             {
-                                if (UpdatePayslip(paySlip, totalAmount))
+                                if (UpdatePayslip(ref paySlip, totalAmount))
                                 {
                                     _paySlipRepository.SaveChanges();
                                 }
-                                else
-                                {
-                                    serverError.EmployeeIds.Add(model.EmployeeIds[i]);
-                                    flag = true;
-                                }
+                                else flag = true;
                             }
-                            else
-                            {
-                                serverError.EmployeeIds.Add(model.EmployeeIds[i]);
-                                flag = true;
-                            }
+                            else flag = true;
                         }
-                        else
+                        else flag = true;
+
+                        if (flag)
                         {
                             serverError.EmployeeIds.Add(model.EmployeeIds[i]);
-                            flag = true;
+                            _paySlipRepository.Delete(_ => _.Id.Equals(paySlip.Id));
                         }
                     }
                     else
@@ -473,7 +468,7 @@ namespace EPayroll_BE.Services
                 return false;
             }
         }
-        private bool UpdatePayslip(PaySlip paySlip, long totalAmount)
+        private bool UpdatePayslip(ref PaySlip paySlip, long totalAmount)
         {
             try
             {
