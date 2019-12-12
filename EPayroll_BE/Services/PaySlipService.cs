@@ -63,9 +63,24 @@ namespace EPayroll_BE.Services
             return paySlip.Id;
         }
 
-        public IList<Guid> PaySalary(PaySlipPaySalaryModel model)
+        public IList<PaySlipPaySalaryErrorViewModel> PaySalary(PaySlipPaySalaryModel model)
         {
-            IList<Guid> errorIds = new List<Guid>();
+            IList<PaySlipPaySalaryErrorViewModel> errors = new List<PaySlipPaySalaryErrorViewModel>();
+            PaySlipPaySalaryErrorViewModel serverError = new PaySlipPaySalaryErrorViewModel
+            {
+                Error = "Server error",
+                EmployeeIds = new List<Guid>()
+            };
+            PaySlipPaySalaryErrorViewModel salaryPaidError = new PaySlipPaySalaryErrorViewModel
+            {
+                Error = "Employee has payslip for this pay period",
+                EmployeeIds = new List<Guid>()
+            };
+            PaySlipPaySalaryErrorViewModel noWorkError = new PaySlipPaySalaryErrorViewModel
+            {
+                Error = "Employee didn't work in this pay period",
+                EmployeeIds = new List<Guid>()
+            };
 
             string token = GetTokenFromESAPI();
             if (token == null) return null;
@@ -75,48 +90,85 @@ namespace EPayroll_BE.Services
             PaySlip paySlip;
             DateTime createdDate = DateTime.Now;
 
+            bool flag = false;
             for (int i = 0; i < model.EmployeeIds.Count; i++)
             {
-                employee = _employeeRepository.GetById(model.EmployeeIds[i]);
-
-                var reports = GetAttendanceReport(token, employee.EsapiEmployeeId, payPeriod.StartDate.Date, payPeriod.EndDate.Date, out int[] workHoursOfDay);
-                
-                if ((workHoursOfDay[0] + workHoursOfDay[1] + workHoursOfDay[2] + workHoursOfDay[3]) != 0)
+                paySlip = _paySlipRepository
+                    .Get(_ => _.PayPeriodId.Equals(model.PayPeriodId) && _.EmployeeId.Equals(model.EmployeeIds[i]))
+                    .FirstOrDefault();
+                if (paySlip == null)
                 {
-                    string paySlipCode = payPeriod.EndDate.Month < 10 ? "0" + payPeriod.EndDate.Month : "" + payPeriod.EndDate.Month;
-                    paySlipCode += (payPeriod.EndDate.Year % 100).ToString();
+                    employee = _employeeRepository.GetById(model.EmployeeIds[i]);
 
-                    paySlip = new PaySlip
+                    var reports = GetAttendanceReport(token, employee.EsapiEmployeeId, payPeriod.StartDate.Date, payPeriod.EndDate.Date, out int[] workHoursOfDay);
+
+                    if ((workHoursOfDay[0] + workHoursOfDay[1] + workHoursOfDay[2] + workHoursOfDay[3]) != 0)
                     {
-                        Amount = 0,
-                        CreatedDate = createdDate,
-                        EmployeeId = model.EmployeeIds[i],
-                        PayPeriodId = model.PayPeriodId,
-                        Status = "Waiting",
-                        PaySlipCode = StringGenerationUtility.GenerateCode() + paySlipCode
-                    };
-                    _paySlipRepository.Add(paySlip);
+                        string paySlipCode = payPeriod.EndDate.Month < 10 ? "0" + payPeriod.EndDate.Month : "" + payPeriod.EndDate.Month;
+                        paySlipCode += (payPeriod.EndDate.Year % 100).ToString();
 
-                    if (AddReportToSalaryShift(reports, paySlip.Id))
-                    {
-                        IList<PayTypeAmount> payTypeAmounts = _payTypeAmountRepository
-                            .Get(_ => _.SalaryLevelId.Equals(employee.SalaryLevelId));
-
-                        if (AddPayItem(paySlip.Id, workHoursOfDay, payTypeAmounts, reports.Count, out long totalAmount))
+                        paySlip = new PaySlip
                         {
-                            if (UpdatePayslip(paySlip, totalAmount))
+                            Amount = 0,
+                            CreatedDate = createdDate,
+                            EmployeeId = model.EmployeeIds[i],
+                            PayPeriodId = model.PayPeriodId,
+                            Status = "Waiting",
+                            PaySlipCode = StringGenerationUtility.GenerateCode() + paySlipCode
+                        };
+                        _paySlipRepository.Add(paySlip);
+
+                        if (AddReportToSalaryShift(reports, paySlip.Id))
+                        {
+                            IList<PayTypeAmount> payTypeAmounts = _payTypeAmountRepository
+                                .Get(_ => _.SalaryLevelId.Equals(employee.SalaryLevelId));
+
+                            if (AddPayItem(paySlip.Id, workHoursOfDay, payTypeAmounts, reports.Count, out long totalAmount))
                             {
-                                _paySlipRepository.SaveChanges();
+                                if (UpdatePayslip(paySlip, totalAmount))
+                                {
+                                    _paySlipRepository.SaveChanges();
+                                }
+                                else
+                                {
+                                    serverError.EmployeeIds.Add(model.EmployeeIds[i]);
+                                    flag = true;
+                                }
                             }
-                            else errorIds.Add(model.EmployeeIds[i]);
+                            else
+                            {
+                                serverError.EmployeeIds.Add(model.EmployeeIds[i]);
+                                flag = true;
+                            }
                         }
-                        else errorIds.Add(model.EmployeeIds[i]);
+                        else
+                        {
+                            serverError.EmployeeIds.Add(model.EmployeeIds[i]);
+                            flag = true;
+                        }
                     }
-                    else errorIds.Add(model.EmployeeIds[i]);
+                    else
+                    {
+                        noWorkError.EmployeeIds.Add(model.EmployeeIds[i]);
+                        flag = true;
+                    }
+                }
+                else
+                {
+                    salaryPaidError.EmployeeIds.Add(model.EmployeeIds[i]);
+                    flag = true;
                 }
             }
 
-            return errorIds;
+            if (flag)
+            {
+                if (serverError.EmployeeIds.Count > 0) errors.Add(serverError);
+                if (noWorkError.EmployeeIds.Count > 0) errors.Add(noWorkError);
+                if (salaryPaidError.EmployeeIds.Count > 0) errors.Add(salaryPaidError);
+
+                return errors;
+            }
+            return null;
         }
 
         public IList<PaySlipViewModel> GetAll(Guid employeeId)
@@ -420,7 +472,7 @@ namespace EPayroll_BE.Services
     {
         Guid Add(PaySlipCreateModel model);
         bool Confirm(PaySlipConfirmViewModel model);
-        IList<Guid> PaySalary(PaySlipPaySalaryModel model);
+        IList<PaySlipPaySalaryErrorViewModel> PaySalary(PaySlipPaySalaryModel model);
         IList<PaySlipViewModel> GetAll(Guid employeeId);
     }
 }

@@ -47,4 +47,10 @@ namespace EPayroll_BE.ViewModels
         public Guid Id { get; set; }
         public bool Accepted { get; set; }
     }
+
+    public class PaySlipPaySalaryErrorViewModel
+    {
+        public string Error { get; set; }
+        public IList<Guid> EmployeeIds { get; set; }
+    }
 }
