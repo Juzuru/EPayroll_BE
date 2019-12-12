@@ -130,7 +130,15 @@ namespace EPayroll_BE.Services
                             {
                                 if (UpdatePayslip(ref paySlip, totalAmount))
                                 {
-                                    _paySlipRepository.SaveChanges();
+                                    try
+                                    {
+                                        _paySlipRepository.SaveChanges();
+                                    }
+                                    catch (Exception)
+                                    {
+                                        _paySlipRepository.Delete(_ => _.Id.Equals(paySlip.Id));
+                                        flag = true;
+                                    }
                                 }
                                 else flag = true;
                             }
@@ -141,7 +149,6 @@ namespace EPayroll_BE.Services
                         if (flag)
                         {
                             serverError.EmployeeIds.Add(model.EmployeeIds[i]);
-                            _paySlipRepository.Delete(_ => _.Id.Equals(paySlip.Id));
                         }
                     }
                     else
