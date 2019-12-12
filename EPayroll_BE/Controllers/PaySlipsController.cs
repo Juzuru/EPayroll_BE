@@ -72,9 +72,9 @@ namespace EPayroll_BE.Controllers
                 if (result == null) return Ok();
                 return BadRequest(result);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(500);
+                return StatusCode(500, e.Message);
             }
         }
         #endregion
