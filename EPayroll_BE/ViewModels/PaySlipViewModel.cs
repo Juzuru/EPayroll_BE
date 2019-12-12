@@ -41,4 +41,10 @@ namespace EPayroll_BE.ViewModels
 
         public IList<GroupPayItemViewModel> GroupPayItems { get; set; }
     }
+
+    public class PaySlipConfirmViewModel
+    {
+        public Guid Id { get; set; }
+        public bool Accepted { get; set; }
+    }
 }

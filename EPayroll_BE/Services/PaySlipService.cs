@@ -401,11 +401,25 @@ namespace EPayroll_BE.Services
                 return false;
             }
         }
+
+        public bool Confirm(PaySlipConfirmViewModel model)
+        {
+            PaySlip paySlip = _paySlipRepository.GetById(model.Id);
+            if (paySlip == null) return false;
+
+            paySlip.Status = model.Accepted == true ? "Accepted" : "Unaccepted";
+
+            _paySlipRepository.Update(paySlip);
+            _paySlipRepository.SaveChanges();
+
+            return true;
+        }
     }
 
     public interface IPaySlipService
     {
         Guid Add(PaySlipCreateModel model);
+        bool Confirm(PaySlipConfirmViewModel model);
         IList<Guid> PaySalary(PaySlipPaySalaryModel model);
         IList<PaySlipViewModel> GetAll(Guid employeeId);
     }
