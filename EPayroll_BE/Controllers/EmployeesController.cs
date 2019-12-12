@@ -48,8 +48,8 @@ namespace EPayroll_BE.Controllers
 
         // Get all
         [HttpGet]
-        [SwaggerResponse(200, typeof(IList<EmployeeListViewModel>),Description ="Return all employees")]
-       [SwaggerResponse(500, null, Description ="Server error")]
+        [SwaggerResponse(200, typeof(IList<EmployeeListViewModel>), Description = "Return all employees")]
+        [SwaggerResponse(500, null, Description = "Server error")]
         public ActionResult GetAll([FromQuery]Guid? positionId = null)
         {
             try
@@ -60,6 +60,23 @@ namespace EPayroll_BE.Controllers
             {
 
                 return StatusCode(500);
+            }
+        }
+
+        [HttpGet("no-payslip")]
+        [SwaggerResponse(400, null, Description = "Return missing parameters")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GetNoPayslipEmployee([FromQuery]Guid? payPeriodId, [FromQuery]Guid? positionId)
+        {
+            try
+            {
+                if (payPeriodId == null) return BadRequest("Pay period ID is required");
+                if (positionId == null) return BadRequest("Position ID is required");
+                return Ok(_employeeService.GetNoPayslipEmployee(new Guid(payPeriodId.ToString()), new Guid(positionId.ToString())));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
             }
         }
         #endregion
