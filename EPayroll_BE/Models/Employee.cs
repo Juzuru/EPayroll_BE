@@ -16,7 +16,6 @@ namespace EPayroll_BE.Models
         public string Email { get; set; }
         public string UserUID { get; set; }
         public string IdentifyNumber { get; set; }
-        public int EsapiEmployeeId { get; set; }
         public bool IsDeleted { get; set; }
         public int EsapiEmployeeId { get; set; }
 
