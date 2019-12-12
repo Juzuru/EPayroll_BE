@@ -50,11 +50,11 @@ namespace EPayroll_BE.Controllers
         [HttpGet]
         [SwaggerResponse(200, typeof(IList<EmployeeListViewModel>),Description ="Return all employees")]
        [SwaggerResponse(500, null, Description ="Server error")]
-       public ActionResult GetAll()
+        public ActionResult GetAll([FromQuery]Guid? positionId = null)
         {
             try
             {
-                return Ok(_employeeService.GetAll());
+                return Ok(_employeeService.GetAll(positionId));
             }
             catch (Exception)
             {
