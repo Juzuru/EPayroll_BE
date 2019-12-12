@@ -65,15 +65,13 @@ namespace EPayroll_BE.Services
 
         public IList<EmployeeListViewModel> GetAll(Guid? positionId = null)
         {
-            IList<Employee> list = null;
+            IList<Employee> list;
 
             if (positionId != null)
             {
-                _employeeRepository.Get(_ => _.PositionId.Equals(positionId));
+                list = _employeeRepository.Get(_ => _.PositionId.Equals(positionId));
             }
-            else _employeeRepository.GetAll().ToList();
-
-            if (list == null) return new List<EmployeeListViewModel>();
+            else list = _employeeRepository.GetAll().ToList();
 
             IList<EmployeeListViewModel> result = new List<EmployeeListViewModel>();
 
