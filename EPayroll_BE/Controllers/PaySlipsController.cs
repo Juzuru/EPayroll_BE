@@ -133,6 +133,23 @@ namespace EPayroll_BE.Controllers
         {
             return StatusCode(501);
         }
+
+        [HttpPatch("confirm")]
+        [SwaggerResponse(404, null, Description = "Payslip not found")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult ConfirmPaySlip([FromBody]PaySlipConfirmViewModel model)
+        {
+            try
+            {
+                bool result = _paySlipService.Confirm(model);
+                if (result) return Ok();
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
         #endregion
 
         #region Delete

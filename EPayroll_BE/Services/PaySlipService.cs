@@ -69,30 +69,36 @@ namespace EPayroll_BE.Services
         {
             IList<Guid> errorIds = new List<Guid>();
 
-            string token = GetTokenFromESAI();
+            string token = GetTokenFromESAPI();
             if (token == null) return null;
 
             Employee employee;
             PayPeriod payPeriod = _payPeriodRepository.GetById(model.PayPeriodId);
             PaySlip paySlip;
+            DateTime createdDate = DateTime.Now;
 
             for (int i = 0; i < model.EmployeeIds.Count; i++)
             {
                 employee = _employeeRepository.GetById(model.EmployeeIds[i]);
 
                 var reports = GetAttendanceReport(token, employee.EsapiEmployeeId, payPeriod.StartDate.Date, payPeriod.EndDate.Date, out int[] workHoursOfDay);
-                paySlip = _paySlipRepository
-                    .Get(_ => _.PayPeriodId.Equals(payPeriod.Id)
-                            && _.EmployeeId.Equals(model.EmployeeIds[i]))
-                    .FirstOrDefault();
+                
+                if ((workHoursOfDay[0] + workHoursOfDay[1] + workHoursOfDay[2] + workHoursOfDay[3]) != 0)
+                {
+                    string paySlipCode = payPeriod.EndDate.Month < 10 ? "0" + payPeriod.EndDate.Month : "" + payPeriod.EndDate.Month;
+                    paySlipCode += (payPeriod.EndDate.Year % 100).ToString();
 
-                if ((workHoursOfDay[0] + workHoursOfDay[1] + workHoursOfDay[2] + workHoursOfDay[3]) == 0)
-                {
-                    _paySlipRepository.Delete(paySlip);
-                    _paySlipRepository.SaveChanges();
-                }
-                else
-                {
+                    paySlip = new PaySlip
+                    {
+                        Amount = 0,
+                        CreatedDate = createdDate,
+                        EmployeeId = model.EmployeeIds[i],
+                        PayPeriodId = model.PayPeriodId,
+                        Status = "Waiting",
+                        PaySlipCode = StringGenerationUtility.GenerateCode() + paySlipCode
+                    };
+                    _paySlipRepository.Add(paySlip);
+
                     if (AddReportToSalaryShift(reports, paySlip.Id))
                     {
                         IList<PayTypeAmount> payTypeAmounts = _payTypeAmountRepository
@@ -154,18 +160,26 @@ namespace EPayroll_BE.Services
             IList<PaySlip> list = _paySlipRepository
                 .Get(_playSlip => _playSlip.EmployeeId.Equals(employeeId))
                 .OrderByDescending(_paySlip => _paySlip.CreatedDate)
-                .Reverse().ToList();
+                .ToList();
 
             IList<PaySlipViewModel> result = new List<PaySlipViewModel>();
+            PayPeriod payPeriod;
 
             for (int i = 0; i < list.Count; i++)
             {
+                payPeriod = _payPeriodRepository.GetById(list[i].PayPeriodId);
+
                 result.Add(new PaySlipViewModel
                 {
                     Id = list[i].Id,
                     PaySlipCode = list[i].PaySlipCode,
                     Amount = list[i].Amount,
-                    Status = list[i].Status
+                    Status = list[i].Status,
+                    PayPeriod = new PayPeriodViewModel
+                    {
+                        Id = payPeriod.Id,
+                        Name = payPeriod.Name
+                    }
                 });
             }
 
@@ -234,8 +248,7 @@ namespace EPayroll_BE.Services
             }
             return null;
         }
-
-        private string GetTokenFromESAI()
+        private string GetTokenFromESAPI()
         {
             ESAPIAuthorizedModel authorizedModel = _requestService.Post<ESAPIAuthorizedModel>("http://employeeshiftapi.unicode.edu.vn/api/AspNetUsers/login", new ESAPILoginModel
             {
@@ -423,11 +436,25 @@ namespace EPayroll_BE.Services
                 return false;
             }
         }
+
+        public bool Confirm(PaySlipConfirmViewModel model)
+        {
+            PaySlip paySlip = _paySlipRepository.GetById(model.Id);
+            if (paySlip == null) return false;
+
+            paySlip.Status = model.Accepted == true ? "Accepted" : "Unaccepted";
+
+            _paySlipRepository.Update(paySlip);
+            _paySlipRepository.SaveChanges();
+
+            return true;
+        }
     }
 
     public interface IPaySlipService
     {
         Guid Add(PaySlipCreateModel model);
+        bool Confirm(PaySlipConfirmViewModel model);
         IList<Guid> PaySalary(PaySlipPaySalaryModel model);
         IList<PaySlipViewModel> GetAll(Guid employeeId);
         PaySlipDetailViewModel GetById(Guid paySlipId);
