@@ -14,13 +14,15 @@ namespace EPayroll_BE.Services
         private readonly IPositionRepository _positionRepository;
         private readonly ISalaryModeRepository _salaryModeRepository;
         private readonly ISalaryLevelRepository _salaryLevelRepository;
+        private readonly IPaySlipRepository _paySlipRepository;
 
-        public EmployeeService(IEmployeeRepository employeeRepository, IPositionRepository positionRepository, ISalaryModeRepository salaryModeRepository, ISalaryLevelRepository salaryLevelRepository)
+        public EmployeeService(IEmployeeRepository employeeRepository, IPositionRepository positionRepository, ISalaryModeRepository salaryModeRepository, ISalaryLevelRepository salaryLevelRepository, IPaySlipRepository paySlipRepository)
         {
             _employeeRepository = employeeRepository;
             _positionRepository = positionRepository;
             _salaryModeRepository = salaryModeRepository;
             _salaryLevelRepository = salaryLevelRepository;
+            _paySlipRepository = paySlipRepository;
         }
 
         public Guid Add(EmployeeCreateModel model)
@@ -90,6 +92,39 @@ namespace EPayroll_BE.Services
             }
             return null;
         }
+
+        public IList<EmployeeViewModelV2> GetNoPayslipEmployee(Guid payPeriodId, Guid positionId)
+        {
+            var payslips = _paySlipRepository.Get(_ => _.PayPeriodId.Equals(payPeriodId) && _.Employee.PositionId.Equals(positionId));
+            var employees = _employeeRepository.Get(_ => _.PositionId.Equals(positionId));
+
+            IList<EmployeeViewModelV2> result = new List<EmployeeViewModelV2>();
+            bool flag;
+            for (int i = 0; i < employees.Count; i++)
+            {
+                flag = false;
+                for (int j = 0; j < payslips.Count; j++)
+                {
+                    if (employees[i].Id.Equals(payslips[j].EmployeeId))
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+
+                if (!flag)
+                {
+                    result.Add(new EmployeeViewModelV2
+                    {
+                        Id = employees[i].Id,
+                        Email = employees[i].Email,
+                        Name = employees[i].Name
+                    });
+                }
+            }
+
+            return result;
+        }
     }
 
     public interface IEmployeeService
@@ -97,5 +132,6 @@ namespace EPayroll_BE.Services
         Guid Add(EmployeeCreateModel model);
         Guid? CheckUser(EmployeeCheckUserModel model);
         EmployeeDetailViewModel GetDetail(Guid employeeId);
+        IList<EmployeeViewModelV2> GetNoPayslipEmployee(Guid payPeriodId, Guid positionId);
     }
 }
