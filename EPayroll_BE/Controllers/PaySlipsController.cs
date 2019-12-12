@@ -86,10 +86,9 @@ namespace EPayroll_BE.Controllers
         {
             try
             {
-                IList<Guid> errorIds = _paySlipService.PaySalary(model);
-                if (errorIds == null) return StatusCode(502);
-                else if (errorIds.Count == 0) return Ok();
-                return BadRequest(errorIds);
+                var result = _paySlipService.PaySalary(model);
+                if (result == null) return Ok();
+                return BadRequest(result);
             }
             catch (Exception)
             {
