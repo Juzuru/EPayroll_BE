@@ -22,7 +22,8 @@ namespace EPayroll_BE.Services
             PayType payType = new PayType
             {
                 Name = model.Name,
-                PayTypeCategoryId = model.PayTypeCategoryId
+                PayTypeCategoryId = model.PayTypeCategoryId,
+                IsMultiple = model.IsMultiple
             };
 
             _payTypeRepository.Add(payType);
