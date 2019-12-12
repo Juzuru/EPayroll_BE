@@ -63,10 +63,18 @@ namespace EPayroll_BE.Services
             return employee.Id;
         }
 
-        public IList<EmployeeListViewModel> GetAll()
+        public IList<EmployeeListViewModel> GetAll(Guid? positionId = null)
         {
-            IList<Employee> list = _employeeRepository.GetAll().ToList();
+            IList<Employee> list = null;
 
+            if (positionId != null)
+            {
+                _employeeRepository.Get(_ => _.PositionId.Equals(positionId));
+            }
+            else _employeeRepository.GetAll().ToList();
+
+            if (list == null) return new List<EmployeeListViewModel>();
+            
             IList<EmployeeListViewModel> result = new List<EmployeeListViewModel>();
 
             for (int i = 0; i < list.Count; i++)
@@ -167,6 +175,6 @@ namespace EPayroll_BE.Services
         Guid Add(EmployeeCreateModel model);
         Guid? CheckUser(EmployeeCheckUserModel model);
         EmployeeDetailViewModel GetDetail(Guid employeeId);
-        IList<EmployeeListViewModel> GetAll();
+        IList<EmployeeListViewModel> GetAll(Guid? positionId = null);
     }
 }
