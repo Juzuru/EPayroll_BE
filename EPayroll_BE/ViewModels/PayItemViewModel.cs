@@ -42,20 +42,4 @@ namespace EPayroll_BE.ViewModels
         public Guid PaySlipId { get; set; }
         public Guid PayTypeId { get; set; }
     }
-
-    public class PayItemDetailViewModel
-    {
-        public float Amount { get; set; }
-        public int TotalHour { get; set; }
-        public float HourRate { get; set; }
-
-        public string PayTypeName { get; set; }
-    }
-
-    public class GroupPayItemViewModel
-    {
-        public string PayTypeCategoryName { get; set; }
-
-        public IList<PayItemDetailViewModel> PayItems { get; set; }
-    }
 }
