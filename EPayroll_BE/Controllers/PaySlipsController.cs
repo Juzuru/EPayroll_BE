@@ -40,6 +40,25 @@ namespace EPayroll_BE.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpGet("non-public")]
+        [SwaggerResponse(200, typeof(IList<PaySlipNonPublicViewModel>), Description = "Return non-public payslip by payperiod and position")]
+        [SwaggerResponse(400, null, Description = "Missing period ID or position ID")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GetNonPublic([FromQuery]Guid? payPeriodId, [FromQuery]Guid? positionId)
+        {
+            try
+            {
+                if (payPeriodId == null || positionId == null)
+                    return BadRequest("Missing period ID or position ID");
+
+                return Ok(_paySlipService.GetNonPublic(new Guid(payPeriodId.ToString()), new Guid(positionId.ToString())));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
         #endregion
 
         #region Post
@@ -106,6 +125,21 @@ namespace EPayroll_BE.Controllers
                 bool result = _paySlipService.Confirm(model);
                 if (result) return Ok();
                 return NotFound();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        [HttpPatch("public")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult Public([FromBody]PayslipPublicModel model)
+        {
+            try
+            {
+                _paySlipService.Public(model);
+                return NoContent();
             }
             catch (Exception e)
             {

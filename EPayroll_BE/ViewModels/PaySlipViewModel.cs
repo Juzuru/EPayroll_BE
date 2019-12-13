@@ -53,4 +53,20 @@ namespace EPayroll_BE.ViewModels
         public string Error { get; set; }
         public IList<Guid> EmployeeIds { get; set; }
     }
+
+    public class PayslipPublicModel
+    {
+        public Guid PayPeriodId { get; set; }
+        public Guid PositionId { get; set; }
+        public IList<Guid> EmployeeIds { get; set; }
+    }
+
+    public class PaySlipNonPublicViewModel
+    {
+        public Guid Id { get; set; }
+        public string PaySlipCode { get; set; }
+        public long Amount { get; set; }
+
+        public EmployeeViewModel Employee { get; set; }
+    }
 }

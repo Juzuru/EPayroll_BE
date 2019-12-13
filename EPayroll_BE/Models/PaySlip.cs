@@ -13,6 +13,7 @@ namespace EPayroll_BE.Models
         public DateTime CreatedDate { get; set; }
         public string Status { get; set; }
         public long Amount { get; set; }
+        public bool IsPublic { get; set; }
 
         public Guid PayPeriodId { get; set; }
         public Guid EmployeeId { get; set; }

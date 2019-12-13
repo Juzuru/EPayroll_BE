@@ -1,6 +1,7 @@
 ﻿using EPayroll_BE.Models;
 using EPayroll_BE.Repositories;
 using EPayroll_BE.Services.Base;
+using EPayroll_BE.Services.ThirdParty;
 using EPayroll_BE.Utilities;
 using EPayroll_BE.ViewModels;
 using EPayroll_BE.ViewModels.EmployeeShiftAPIViewModel;
@@ -22,8 +23,9 @@ namespace EPayroll_BE.Services
         private readonly IPayTypeAmountRepository _payTypeAmountRepository;
         private readonly IPayTypeCategoryRepository _payTypeCategoryRepository;
         private readonly IPayTypeRepository _payTypeRepository;
+        private readonly IFirebaseCloudMessagingService _firebaseCloudMessagingService;
 
-        public PaySlipService(IPaySlipRepository paySlipRepository, IPayPeriodRepository payPeriodRepository, IPayItemRepository payItemRepository, IRequestService requestService, IEmployeeRepository employeeRepository, ISalaryShiftRepository salaryShiftRepository, IPayTypeAmountRepository payTypeAmountRepository, IPayTypeCategoryRepository payTypeCategoryRepository, IPayTypeRepository payTypeRepository)
+        public PaySlipService(IPaySlipRepository paySlipRepository, IPayPeriodRepository payPeriodRepository, IPayItemRepository payItemRepository, IRequestService requestService, IEmployeeRepository employeeRepository, ISalaryShiftRepository salaryShiftRepository, IPayTypeAmountRepository payTypeAmountRepository, IPayTypeCategoryRepository payTypeCategoryRepository, IPayTypeRepository payTypeRepository, IFirebaseCloudMessagingService firebaseCloudMessagingService)
         {
             _paySlipRepository = paySlipRepository;
             _payPeriodRepository = payPeriodRepository;
@@ -34,6 +36,7 @@ namespace EPayroll_BE.Services
             _payTypeAmountRepository = payTypeAmountRepository;
             _payTypeCategoryRepository = payTypeCategoryRepository;
             _payTypeRepository = payTypeRepository;
+            _firebaseCloudMessagingService = firebaseCloudMessagingService;
         }
 
         public Guid Add(PaySlipCreateModel model)
@@ -43,7 +46,8 @@ namespace EPayroll_BE.Services
                 PayPeriodId = model.PayPeriodId,
                 EmployeeId = model.EmployeeId,
                 Status = "Draft",
-                CreatedDate = DateTime.Now
+                CreatedDate = DateTime.Now,
+                IsPublic = false
             };
             _paySlipRepository.Add(paySlip);
 
@@ -101,24 +105,24 @@ namespace EPayroll_BE.Services
                     employee = _employeeRepository.GetById(model.EmployeeIds[i]);
 
                     var reports = GetAttendanceReport(token, employee.EsapiEmployeeId, payPeriod.StartDate.Date, payPeriod.EndDate.Date, out int[] workHoursOfDay);
+                    string paySlipCode = payPeriod.EndDate.Month < 10 ? "0" + payPeriod.EndDate.Month : "" + payPeriod.EndDate.Month;
+                    paySlipCode += (payPeriod.EndDate.Year % 100).ToString();
+
+                    paySlip = new PaySlip
+                    {
+                        Amount = 0,
+                        CreatedDate = createdDate,
+                        EmployeeId = model.EmployeeIds[i],
+                        PayPeriodId = model.PayPeriodId,
+                        Status = "Waiting",
+                        PaySlipCode = StringGenerationUtility.GenerateCode() + paySlipCode,
+                        IsPublic = false
+                    };
+                    _paySlipRepository.Add(paySlip);
+                    _paySlipRepository.SaveChanges();
 
                     if ((workHoursOfDay[0] + workHoursOfDay[1] + workHoursOfDay[2] + workHoursOfDay[3]) != 0)
                     {
-                        string paySlipCode = payPeriod.EndDate.Month < 10 ? "0" + payPeriod.EndDate.Month : "" + payPeriod.EndDate.Month;
-                        paySlipCode += (payPeriod.EndDate.Year % 100).ToString();
-
-                        paySlip = new PaySlip
-                        {
-                            Amount = 0,
-                            CreatedDate = createdDate,
-                            EmployeeId = model.EmployeeIds[i],
-                            PayPeriodId = model.PayPeriodId,
-                            Status = "Waiting",
-                            PaySlipCode = StringGenerationUtility.GenerateCode() + paySlipCode
-                        };
-                        _paySlipRepository.Add(paySlip);
-                        _paySlipRepository.SaveChanges();
-
                         if (AddReportToSalaryShift(reports, paySlip.Id))
                         {
                             IList<PayTypeAmount> payTypeAmounts = _payTypeAmountRepository
@@ -468,6 +472,68 @@ namespace EPayroll_BE.Services
 
             return true;
         }
+
+        public void Public(PayslipPublicModel model)
+        {
+            var payslips = _paySlipRepository
+                .Get(_ => _.PayPeriodId.Equals(model.PayPeriodId) 
+                    && _.Employee.PositionId.Equals(model.PositionId)
+                    && _.IsPublic == false);
+
+            for (int i = 0; i < payslips.Count; i++)
+            {
+                for (int j = 0; j < model.EmployeeIds.Count; j++)
+                {
+                    if (payslips[i].EmployeeId.Equals(model.EmployeeIds[j]))
+                    {
+                        payslips[i].IsPublic = true;
+                        break;
+                    }
+                }
+            }
+
+            _paySlipRepository.SaveChanges();
+        }
+
+        public IList<PaySlipNonPublicViewModel> GetNonPublic(Guid payPeriodId, Guid positionId)
+        {
+            var paySlips = _paySlipRepository
+                .Get(_ => _.PayPeriodId.Equals(payPeriodId)
+                    && _.Employee.PositionId.Equals(positionId)
+                    && _.IsPublic == false);
+
+            var employees = _employeeRepository
+                .Get(_ => _.PositionId.Equals(positionId));
+
+            IList<PaySlipNonPublicViewModel> result = new List<PaySlipNonPublicViewModel>();
+
+            for (int i = 0; i < paySlips.Count; i++)
+            {
+                if (paySlips[i].Amount != 0)
+                {
+                    for (int j = 0; j < employees.Count; j++)
+                    {
+                        if (paySlips[i].EmployeeId.Equals(employees[j].Id))
+                        {
+                            result.Add(new PaySlipNonPublicViewModel
+                            {
+                                Id = paySlips[i].Id,
+                                Amount = paySlips[i].Amount,
+                                PaySlipCode = paySlips[i].PaySlipCode,
+                                Employee = new EmployeeViewModel
+                                {
+                                    Id = employees[j].Id,
+                                    Name = employees[j].Name
+                                }
+                            });
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
     }
 
     public interface IPaySlipService
@@ -476,5 +542,7 @@ namespace EPayroll_BE.Services
         bool Confirm(PaySlipConfirmViewModel model);
         IList<PaySlipPaySalaryErrorViewModel> PaySalary(PaySlipPaySalaryModel model);
         IList<PaySlipViewModel> GetAll(Guid employeeId);
+        void Public(PayslipPublicModel model);
+        IList<PaySlipNonPublicViewModel> GetNonPublic(Guid payPeriodId, Guid positionId);
     }
 }
