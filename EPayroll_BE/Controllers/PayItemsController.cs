@@ -47,6 +47,12 @@ namespace EPayroll_BE.Controllers
         #endregion
 
         #region Patch
+        [HttpPatch]
+        [SwaggerResponse(501, null, Description = "Request not implemented")]
+        public ActionResult Patch()
+        {
+            return StatusCode(501);
+        }
         #endregion
 
         #region Delete
