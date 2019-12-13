@@ -106,7 +106,7 @@ namespace EPayroll_BE.Controllers
         #region Patch
         [HttpPatch]
         [SwaggerResponse(501, null, Description = "Request not implemented")]
-        public ActionResult Update()
+        public ActionResult Patch()
         {
             return StatusCode(501);
         }

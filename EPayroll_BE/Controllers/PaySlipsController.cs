@@ -133,6 +133,39 @@ namespace EPayroll_BE.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpPost("confirm")]
+        [SwaggerResponse(404, null, Description = "Payslip not found")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult ConfirmPaySlip([FromBody]PaySlipConfirmViewModel model)
+        {
+            try
+            {
+                bool result = _paySlipService.Confirm(model);
+                if (result) return Ok();
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        [HttpPost("public")]
+        [SwaggerResponse(200, null, Description = "Success")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult Public([FromBody]PayslipPublicModel model)
+        {
+            try
+            {
+                _paySlipService.Public(model);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
         #endregion
 
         #region Put
@@ -150,38 +183,6 @@ namespace EPayroll_BE.Controllers
         public ActionResult Update()
         {
             return StatusCode(501);
-        }
-
-        [HttpPatch("confirm")]
-        [SwaggerResponse(404, null, Description = "Payslip not found")]
-        [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult ConfirmPaySlip([FromBody]PaySlipConfirmViewModel model)
-        {
-            try
-            {
-                bool result = _paySlipService.Confirm(model);
-                if (result) return Ok();
-                return NotFound();
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
-        }
-
-        [HttpPatch("public")]
-        [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult Public([FromBody]PayslipPublicModel model)
-        {
-            try
-            {
-                _paySlipService.Public(model);
-                return NoContent();
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
         }
         #endregion
 
