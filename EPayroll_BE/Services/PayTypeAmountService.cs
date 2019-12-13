@@ -16,11 +16,7 @@ namespace EPayroll_BE.Services
         private readonly IPayTypeCategoryRepository _payTypeCategoryRepository;
         private readonly ISalaryTableRepository _salaryTableRepository;
 
-        public PayTypeAmountService(IPayTypeAmountRepository payTypeAmountRepository,
-            IPayTypeRepository payTypeRepository,
-            ISalaryLevelRepository salaryLevelRepository,
-            IPayTypeCategoryRepository payTypeCategoryRepository,
-            ISalaryTableRepository salaryTableRepository)
+        public PayTypeAmountService(IPayTypeAmountRepository payTypeAmountRepository, IPayTypeRepository payTypeRepository, ISalaryLevelRepository salaryLevelRepository, IPayTypeCategoryRepository payTypeCategoryRepository, ISalaryTableRepository salaryTableRepository)
         {
             _payTypeAmountRepository = payTypeAmountRepository;
             _payTypeRepository = payTypeRepository;
@@ -31,11 +27,14 @@ namespace EPayroll_BE.Services
 
         public Guid Add(PayTypeAmountCreateModel model)
         {
+            PayType payType = _payTypeRepository.GetById(model.PayTypeId);
+
             PayTypeAmount payTypeAmount = new PayTypeAmount
             {
                 Amount = model.Amount,
                 PayTypeId = model.PayTypeId,
-                SalaryLevelId = model.SalaryLevelId
+                SalaryLevelId = model.SalaryLevelId,
+                IsIsMultiple = payType.IsMultiple
             };
 
             _payTypeAmountRepository.Add(payTypeAmount);

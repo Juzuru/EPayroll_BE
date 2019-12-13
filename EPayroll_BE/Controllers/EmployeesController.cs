@@ -141,6 +141,23 @@ namespace EPayroll_BE.Controllers
         {
             return StatusCode(501);
         }
+
+        [HttpPatch("send-fcm-token")]
+        [SwaggerResponse(200, null, Description = "Save Firebase Cloud Messaging successfully")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult SendFCMToken([FromBody]EmployeeSendFCMTokenModel model)
+        {
+            try
+            {
+                var result = _employeeService.UpdateFCMToken(model);
+                if (result) return Ok();
+                return StatusCode(500, "Could not save Firebase Cloud Messaging Token");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
         #endregion
 
         #region Delete

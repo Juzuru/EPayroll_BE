@@ -16,6 +16,7 @@ using System;
 using EPayroll_BE.Utilities;
 using EPayroll_BE.Services;
 using EPayroll_BE.Services.Base;
+using EPayroll_BE.Services.ThirdParty;
 
 namespace EPayroll_BE
 {
@@ -67,6 +68,10 @@ namespace EPayroll_BE
             services.AddScoped<ISalaryModeRepository, SalaryModeRepository>();
             services.AddScoped<ISalaryShiftRepository, SalaryShiftRepository>();
             services.AddScoped<ISalaryTableRepository, SalaryTableRepository>();
+            #endregion
+
+            #region Add Third Party Services
+            services.AddScoped<IFirebaseCloudMessagingService, FirebaseCloudMessagingService>();
             #endregion
 
             #region Add Services

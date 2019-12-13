@@ -197,6 +197,24 @@ namespace EPayroll_BE.Services
 
             return result;
         }
+
+        public bool UpdateFCMToken(EmployeeSendFCMTokenModel model)
+        {
+            try
+            {
+                var employee = _employeeRepository.Get(_ => _.Id.Equals(model.EmployeeId)).FirstOrDefault();
+
+                employee.FCMToken = model.FCMToken;
+
+                _employeeRepository.SaveChanges();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
     }
 
     public interface IEmployeeService
@@ -206,5 +224,6 @@ namespace EPayroll_BE.Services
         EmployeeDetailViewModel GetDetail(Guid employeeId);
         IList<EmployeeListViewModel> GetAll(Guid? positionId = null);
         IList<EmployeeViewModelV2> GetNoPayslipEmployee(Guid payPeriodId, Guid positionId);
+        bool UpdateFCMToken(EmployeeSendFCMTokenModel model);
     }
 }

@@ -80,4 +80,10 @@ namespace EPayroll_BE.ViewModels
         public string Name { get; set; }
         public string Email { get; set; }
     }
+
+    public class EmployeeSendFCMTokenModel
+    {
+        public string FCMToken { get; set; }
+        public Guid EmployeeId { get; set; }
+    }
 }
