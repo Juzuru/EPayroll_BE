@@ -24,9 +24,16 @@ namespace EPayroll_BE.ViewModels
         public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
+    }
 
-        public Guid PositionId { get; set; }
+    public class SalaryTableCreateModelV2
+    {
         [Required]
-        public IList<PayTypeAmountCreateModel> PayTypeAmounts { get; set; }
+        public Guid Id { get; set; }
+        [Required]
+        public bool IsDraft { get; set; }
+
+        [Required]
+        public IList<SalaryLevelCreateModelV2> SalaryLevels { get; set; }
     }
 }

@@ -18,4 +18,13 @@ namespace EPayroll_BE.ViewModels
         public Guid SalaryLevelId { get; set; }
         public Guid PayTypeId { get; set; }
     }
+
+    public class PayTypeAmountCreateModelV2
+    {
+        public Guid? Id { get; set; }
+        [Required]
+        public long Amount { get; set; }
+
+        public Guid PayTypeId { get; set; }
+    }
 }

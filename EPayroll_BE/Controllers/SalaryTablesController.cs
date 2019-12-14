@@ -41,6 +41,22 @@ namespace EPayroll_BE.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpPost("save")]
+        [SwaggerResponse(200, null, Description = "Save successfully")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult Save([FromBody]SalaryTableCreateModelV2 model)
+        {
+            try
+            {
+                _salaryTableService.Save(model);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
         #endregion
 
         #region Put
