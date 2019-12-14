@@ -204,18 +204,19 @@ namespace EPayroll_BE.Services
                                         TotalHour = totalHours
                                     });
                                 }
-
-                                paySlip.Status = "Unpaid";
-                                paySlip.Amount = totalAmount;
-
-                                _paySlipRepository.Update(paySlip);
-                                _paySlipRepository.SaveChanges();
                             }
+
+                            paySlip.Status = "Unpaid";
+                            paySlip.Amount = totalAmount;
+
+                            _paySlipRepository.Update(paySlip);
                         }
                         catch (Exception e)
                         {
+                            _paySlipRepository.Delete(_ => _.Id.Equals(paySlip.Id));
                             serverError.EmployeeIds.Add(model.EmployeeIds[i]);
                         }
+                        _paySlipRepository.SaveChanges();
                     }
                     else
                     {

@@ -13,12 +13,14 @@ namespace EPayroll_BE.Services
         private readonly ISalaryTableRepository _salaryTableRepository;
         private readonly ISalaryLevelRepository _salaryLevelRepository;
         private readonly IPayTypeAmountRepository _payTypeAmountRepository;
+        private readonly IPayTypeRepository _payTypeRepository;
 
-        public SalaryTableService(ISalaryTableRepository salaryTableRepository, ISalaryLevelRepository salaryLevelRepository, IPayTypeAmountRepository payTypeAmountRepository)
+        public SalaryTableService(ISalaryTableRepository salaryTableRepository, ISalaryLevelRepository salaryLevelRepository, IPayTypeAmountRepository payTypeAmountRepository, IPayTypeRepository payTypeRepository)
         {
             _salaryTableRepository = salaryTableRepository;
             _salaryLevelRepository = salaryLevelRepository;
             _payTypeAmountRepository = payTypeAmountRepository;
+            _payTypeRepository = payTypeRepository;
         }
 
         public Guid Add(SalaryTableCreateModel model)
@@ -80,8 +82,6 @@ namespace EPayroll_BE.Services
                                 payTypeAmount = _payTypeAmountRepository.Get(_ => _.Id.Equals(model.SalaryLevels[i].PayTypeAmounts[j].Id)).FirstOrDefault();
 
                                 payTypeAmount.Amount = model.SalaryLevels[i].PayTypeAmounts[j].Amount;
-                                //IsIsMultiple
-                                payTypeAmount.PayTypeId = model.SalaryLevels[i].PayTypeAmounts[j].PayTypeId;
 
                                 _payTypeAmountRepository.Update(payTypeAmount);
                             }
@@ -90,9 +90,9 @@ namespace EPayroll_BE.Services
                                 _payTypeAmountRepository.Add(new PayTypeAmount
                                 {
                                     Amount = model.SalaryLevels[i].PayTypeAmounts[j].Amount,
-                                    //IsIsMultiple
                                     PayTypeId = model.SalaryLevels[i].PayTypeAmounts[j].PayTypeId,
-                                    SalaryLevelId = salaryLevel.Id
+                                    SalaryLevelId = salaryLevel.Id,
+                                    Order = _payTypeRepository.Get(_ => _.Id.Equals(model.SalaryLevels[i].PayTypeAmounts[j].PayTypeId)).FirstOrDefault().Order
                                 });
                             }
                         }
