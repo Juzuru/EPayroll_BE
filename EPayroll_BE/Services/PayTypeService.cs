@@ -23,7 +23,7 @@ namespace EPayroll_BE.Services
             {
                 Name = model.Name,
                 PayTypeCategoryId = model.PayTypeCategoryId,
-                IsMultiple = model.IsMultiple
+                Order = model.Order
             };
 
             _payTypeRepository.Add(payType);

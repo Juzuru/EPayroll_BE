@@ -10,7 +10,7 @@ namespace EPayroll_BE.Models
     public class PayTypeAmount : ModelBase
     {
         public long Amount { get; set; }
-        public bool IsIsMultiple { get; set; }
+        public int Order { get; set; }
 
         public Guid SalaryLevelId { get; set; }
         public Guid PayTypeId { get; set; }
