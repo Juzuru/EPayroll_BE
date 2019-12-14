@@ -102,11 +102,46 @@ namespace EPayroll_BE.Services
                 _salaryTableRepository.SaveChanges();
             }
         }
+
+        public IList<SalaryTableViewModel> GetNonPublic()
+        {
+            var salaryTables = _salaryTableRepository.Get(_ => _.IsEnable == false);
+
+            IList<SalaryTableViewModel> result = new List<SalaryTableViewModel>();
+            for (int i = 0; i < salaryTables.Count; i++)
+            {
+                result.Add(new SalaryTableViewModel
+                {
+                    Name = salaryTables[i].Name,
+                    IsEnable = false,
+                    CreatedDate = salaryTables[i].CreatedDate,
+                    EndDate = salaryTables[i].EndDate,
+                    Id = salaryTables[i].Id,
+                    StartDate = salaryTables[i].StartDate
+                });
+            }
+
+            return result;
+        }
+
+        public void Public(Guid[] salaryTableIds)
+        {
+            for (int i = 0; i < salaryTableIds.Length; i++)
+            {
+                var salaryTable = _salaryTableRepository.Get(_ => _.Id.Equals(salaryTableIds[i])).FirstOrDefault();
+                salaryTable.IsEnable = true;
+                _salaryTableRepository.Update(salaryTable);
+            }
+
+            _salaryTableRepository.SaveChanges();
+        }
     }
 
     public interface ISalaryTableService
     {
         Guid Add(SalaryTableCreateModel model);
         void Save(SalaryTableSaveModelV2 model);
+        IList<SalaryTableViewModel> GetNonPublic();
+        void Public(Guid[] salaryTableIds);
     }
 }

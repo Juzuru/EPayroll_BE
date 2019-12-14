@@ -23,6 +23,20 @@ namespace EPayroll_BE.Controllers
         }
 
         #region Get
+        [HttpGet("non-public")]
+        [SwaggerResponse(200, typeof(IList<SalaryTableViewModel>), Description = "Return a list od non-public salary table")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GetNonPublic()
+        {
+            try
+            {
+                return Ok(_salaryTableService.GetNonPublic());
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
         #endregion
 
         #region Post
@@ -50,6 +64,26 @@ namespace EPayroll_BE.Controllers
             try
             {
                 _salaryTableService.Save(model);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        [HttpPost("public")]
+        [SwaggerResponse(200, null, Description = "public successfully")]
+        [SwaggerResponse(400, null, Description = "Missing salary table Id")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult Public([FromBody]Guid[] salaryTableIds = null)
+        {
+            try
+            {
+                if (salaryTableIds == null) return BadRequest("Missing salary table Ids");
+                else if (salaryTableIds.Length == 0) return BadRequest("Missing salary table Ids");
+
+                _salaryTableService.Public(salaryTableIds);
                 return Ok();
             }
             catch (Exception e)
