@@ -67,11 +67,14 @@ namespace EPayroll_BE.Controllers
         [HttpPost]
         [SwaggerResponse(201, typeof(Guid), Description = "Return Id of created payPeriod")]
         [SwaggerResponse(400, typeof(Error400BadRequestBase), Description = "Return fields require")]
+        [SwaggerResponse(400, null, Description = "End date of pay period exceeds the end date of the last salary table. Please create a salary table first")]
         [SwaggerResponse(500, null, Description = "Server error")]
         public ActionResult Add([FromBody]PayPeriodCreateModel model)
         {
             try
             {
+                var result = _payPeriodService.Add(model);
+                if (result == null) return BadRequest("End date of pay period exceeds the end date of the last salary table. Please create a salary table first");
                 return StatusCode(201, _payPeriodService.Add(model));
             }
             catch (Exception)

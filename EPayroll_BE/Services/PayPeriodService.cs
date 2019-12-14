@@ -11,14 +11,20 @@ namespace EPayroll_BE.Services
     public class PayPeriodService : IPayPeriodService
     {
         private readonly IPayPeriodRepository _payPeriodRepository;
+        private readonly ISalaryTableRepository _salaryTableRepository;
 
-        public PayPeriodService(IPayPeriodRepository payPeriodRepository)
+        public PayPeriodService(IPayPeriodRepository payPeriodRepository, ISalaryTableRepository salaryTableRepository)
         {
             _payPeriodRepository = payPeriodRepository;
+            _salaryTableRepository = salaryTableRepository;
         }
 
-        public Guid Add(PayPeriodCreateModel model)
+        public Guid? Add(PayPeriodCreateModel model)
         {
+            SalaryTable salaryTable = _salaryTableRepository.GetAll().OrderByDescending(_ => _.EndDate).FirstOrDefault();
+
+            if (salaryTable.EndDate.Date < model.EndDate.Date) return null;
+
             PayPeriod payPeriod = new PayPeriod
             {
                 Name = model.Name,
@@ -72,7 +78,7 @@ namespace EPayroll_BE.Services
 
     public interface IPayPeriodService
     {
-        Guid Add(PayPeriodCreateModel model);
+        Guid? Add(PayPeriodCreateModel model);
         PayPeriodDetailViewModel GetDetail(Guid payPeriodId);
         IList<PayPeriodDetailViewModel> GetAll();
     }
