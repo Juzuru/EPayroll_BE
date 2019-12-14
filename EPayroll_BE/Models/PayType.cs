@@ -10,7 +10,7 @@ namespace EPayroll_BE.Models
     public class PayType : ModelBase
     {
         public string Name { get; set; }
-        public bool IsMultiple { get; set; }
+        public int Order { get; set; }
 
         public Guid PayTypeCategoryId { get; set; }
 

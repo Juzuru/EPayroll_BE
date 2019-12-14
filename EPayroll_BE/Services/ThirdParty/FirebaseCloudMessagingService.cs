@@ -12,7 +12,7 @@ namespace EPayroll_BE.Services.ThirdParty
         private readonly string firebaseCloudMessagingKey = "AIzaSyB91JWspHypNVmpZCRPTdUii9os8qEjG4w";
         private readonly string firebaseCloudMessagingUri = "https://fcm.googleapis.com/fcm/send";
 
-        public void SendNotification(object notification)
+        public void SendNotification(Dictionary<string, object> notification)
         {
             string content = JsonConvert.SerializeObject(notification);
 
@@ -23,9 +23,9 @@ namespace EPayroll_BE.Services.ThirdParty
 
                 StringContent stringContent = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
 
-                using (var response = httpClient.PostAsync(firebaseCloudMessagingUri, stringContent))
+                using (var response = httpClient.PostAsync(firebaseCloudMessagingUri, stringContent).GetAwaiter().GetResult())
                 {
-
+                    response.EnsureSuccessStatusCode();
                 }
             }
         }
@@ -33,6 +33,6 @@ namespace EPayroll_BE.Services.ThirdParty
 
     public interface IFirebaseCloudMessagingService
     {
-        void SendNotification(object notification);
+        void SendNotification(Dictionary<string, object> notification);
     }
 }

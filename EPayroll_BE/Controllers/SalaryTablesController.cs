@@ -37,6 +37,21 @@ namespace EPayroll_BE.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpGet("non-public")]
+        [SwaggerResponse(200, typeof(IList<SalaryTableViewModel>), Description = "Return a list od non-public salary table")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult GetNonPublic()
+        {
+            try
+            {
+                return Ok(_salaryTableService.GetNonPublic());
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
         #endregion
 
         #region Post
@@ -53,6 +68,42 @@ namespace EPayroll_BE.Controllers
             catch (Exception)
             {
                 return StatusCode(500);
+            }
+        }
+
+        [HttpPost("save")]
+        [SwaggerResponse(200, null, Description = "Save successfully")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult Save([FromBody]SalaryTableSaveModelV2 model)
+        {
+            try
+            {
+                _salaryTableService.Save(model);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        [HttpPost("public")]
+        [SwaggerResponse(200, null, Description = "public successfully")]
+        [SwaggerResponse(400, null, Description = "Missing salary table Id")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult Public([FromBody]Guid[] salaryTableIds = null)
+        {
+            try
+            {
+                if (salaryTableIds == null) return BadRequest("Missing salary table Ids");
+                else if (salaryTableIds.Length == 0) return BadRequest("Missing salary table Ids");
+
+                _salaryTableService.Public(salaryTableIds);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
             }
         }
         #endregion

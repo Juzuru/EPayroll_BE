@@ -153,13 +153,14 @@ namespace EPayroll_BE.Controllers
 
         [HttpPost("public")]
         [SwaggerResponse(200, null, Description = "Success")]
-        [SwaggerResponse(500, null, Description = "Server error")]
+        [SwaggerResponse(500, null, Description = "Server error or return a list of payslip ID that can't public")]
         public ActionResult Public([FromBody]PayslipPublicModel model)
         {
             try
             {
-                _paySlipService.Public(model);
-                return Ok();
+                var result = _paySlipService.Public(model);
+                if (result.Count == 0) return Ok();
+                return StatusCode(500, result);
             }
             catch (Exception e)
             {

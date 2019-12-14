@@ -71,6 +71,7 @@ namespace EPayroll_BE
             #endregion
 
             #region Add Third Party Services
+            services.AddScoped<IESAPIService, ESAPIService>();
             services.AddScoped<IFirebaseCloudMessagingService, FirebaseCloudMessagingService>();
             #endregion
 

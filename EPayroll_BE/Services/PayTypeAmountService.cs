@@ -34,7 +34,7 @@ namespace EPayroll_BE.Services
                 Amount = model.Amount,
                 PayTypeId = model.PayTypeId,
                 SalaryLevelId = model.SalaryLevelId,
-                IsIsMultiple = payType.IsMultiple
+                 Order = payType.Order
             };
 
             _payTypeAmountRepository.Add(payTypeAmount);
