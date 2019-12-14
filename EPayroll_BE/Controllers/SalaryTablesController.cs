@@ -45,7 +45,7 @@ namespace EPayroll_BE.Controllers
         [HttpPost("save")]
         [SwaggerResponse(200, null, Description = "Save successfully")]
         [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult Save([FromBody]SalaryTableCreateModelV2 model)
+        public ActionResult Save([FromBody]SalaryTableSaveModelV2 model)
         {
             try
             {

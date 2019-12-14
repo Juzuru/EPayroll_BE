@@ -26,12 +26,10 @@ namespace EPayroll_BE.ViewModels
         public DateTime EndDate { get; set; }
     }
 
-    public class SalaryTableCreateModelV2
+    public class SalaryTableSaveModelV2
     {
         [Required]
         public Guid Id { get; set; }
-        [Required]
-        public bool IsDraft { get; set; }
 
         [Required]
         public IList<SalaryLevelCreateModelV2> SalaryLevels { get; set; }

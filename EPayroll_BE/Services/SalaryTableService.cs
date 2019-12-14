@@ -39,7 +39,7 @@ namespace EPayroll_BE.Services
             return salaryTable.Id;
         }
 
-        public void Save(SalaryTableCreateModelV2 model)
+        public void Save(SalaryTableSaveModelV2 model)
         {
             if (model.SalaryLevels.Count != 0)
             {
@@ -107,6 +107,6 @@ namespace EPayroll_BE.Services
     public interface ISalaryTableService
     {
         Guid Add(SalaryTableCreateModel model);
-        void Save(SalaryTableCreateModelV2 model);
+        void Save(SalaryTableSaveModelV2 model);
     }
 }
