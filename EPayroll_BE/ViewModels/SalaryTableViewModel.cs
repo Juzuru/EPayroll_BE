@@ -24,6 +24,8 @@ namespace EPayroll_BE.ViewModels
         public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
+        [Required]
+        public Guid PositionId { get; set; }
     }
 
     public class SalaryTableSaveModelV2

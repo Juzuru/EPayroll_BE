@@ -30,7 +30,7 @@ namespace EPayroll_BE.Services
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
                 CreatedDate = DateTime.Now,
-                IsDraft = true
+                PositionId = model.PositionId
             };
 
             _salaryTableRepository.Add(salaryTable);

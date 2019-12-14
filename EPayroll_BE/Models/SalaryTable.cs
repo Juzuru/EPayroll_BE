@@ -14,11 +14,9 @@ namespace EPayroll_BE.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool IsEnable { get; set; }
-        public bool IsDraft { get; set; }
 
-        //public int SalaryModeId { get; set; }
-
-        //[ForeignKey("SalaryModeId")]
-        //public SalaryMode SalaryMode { get; set; }
+        public Guid PositionId { get; set; }
+        [ForeignKey("PositionId")]
+        public Position Position { get; set; }
     }
 }

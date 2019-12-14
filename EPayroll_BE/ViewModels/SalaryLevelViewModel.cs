@@ -22,12 +22,13 @@ namespace EPayroll_BE.ViewModels
         [Required]
         public string Level { get; set; }
         [Required]
+        public int Order { get; set; }
+        [Required]
         public double Factor { get; set; }
         [Required]
         public string Condition { get; set; }
 
         public Guid SalaryTableId { get; set; }
-        public Guid PositionId { get; set; }
     }
 
     public class SalaryLevelCreateModelV2

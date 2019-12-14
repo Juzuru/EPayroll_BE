@@ -26,7 +26,6 @@ namespace EPayroll_BE.Services
                 Factor = model.Factor,
                 Condition = model.Condition,
                 SalaryTableId = model.SalaryTableId,
-                PositionId = model.PositionId
             };
 
             _salaryLevelRepository.Add(salaryLevel);
