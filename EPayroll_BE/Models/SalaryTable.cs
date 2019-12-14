@@ -14,6 +14,7 @@ namespace EPayroll_BE.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool IsEnable { get; set; }
+        public bool IsDraft { get; set; }
 
         //public int SalaryModeId { get; set; }
 

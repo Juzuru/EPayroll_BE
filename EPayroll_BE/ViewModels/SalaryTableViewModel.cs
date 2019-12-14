@@ -27,6 +27,6 @@ namespace EPayroll_BE.ViewModels
 
         public Guid PositionId { get; set; }
         [Required]
-        public IList<PayTypeAmountCreateModel> PayTypes { get; set; }
+        public IList<PayTypeAmountCreateModel> PayTypeAmounts { get; set; }
     }
 }

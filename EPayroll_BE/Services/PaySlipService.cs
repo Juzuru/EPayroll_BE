@@ -5,6 +5,7 @@ using EPayroll_BE.Services.ThirdParty;
 using EPayroll_BE.Utilities;
 using EPayroll_BE.ViewModels;
 using EPayroll_BE.ViewModels.EmployeeShiftAPIViewModel;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -473,26 +474,63 @@ namespace EPayroll_BE.Services
             return true;
         }
 
-        public void Public(PayslipPublicModel model)
+        public IList<Guid> Public(PayslipPublicModel model)
         {
             var payslips = _paySlipRepository
                 .Get(_ => _.PayPeriodId.Equals(model.PayPeriodId) 
                     && _.Employee.PositionId.Equals(model.PositionId)
                     && _.IsPublic == false);
 
+            PayPeriod payPeriod = _payPeriodRepository.Get(_ => _.Id.Equals(model.PayPeriodId)).FirstOrDefault();
+            IList<Guid> errorIds = new List<Guid>();
             for (int i = 0; i < payslips.Count; i++)
             {
                 for (int j = 0; j < model.EmployeeIds.Count; j++)
                 {
                     if (payslips[i].EmployeeId.Equals(model.EmployeeIds[j]))
                     {
-                        payslips[i].IsPublic = true;
-                        break;
+                        try
+                        {
+                            payslips[i].IsPublic = true;
+                            _paySlipRepository.SaveChanges();
+
+                            _firebaseCloudMessagingService.SendNotification(new Dictionary<string, object>
+                            {
+                                { "collapse_key", "PaySlip" },
+                                { "title", "Phiếu lương" },
+                                { "data", new Dictionary<string, Guid>
+                                    {
+                                        { "paySlipId", payslips[i].Id }
+                                    }
+                                },
+                                { "to", _employeeRepository.Get(_ => _.Id.Equals(payslips[i].EmployeeId)).FirstOrDefault().FCMToken },
+                                { "delay_while_idle", true },
+                                //androidMessageDic.Add("time_to_live", 125);
+                                { "notification", new Dictionary<string, string>
+                                    {
+                                        { "title", "Phiếu Lương"},
+                                        { "subtitle", "subtitle"},
+                                        { "body", "Phiếu lương mới cho kì lương " + payPeriod.Name.ToLower()}
+                                    } 
+                                },
+                                { "dry_run", false }
+                            });
+
+                            break;
+                        }
+                        catch (Exception e)
+                        {
+                            payslips[i].IsPublic = false;
+                            _paySlipRepository.SaveChanges();
+                            errorIds.Add(payslips[i].Id);
+                        }
                     }
                 }
             }
 
-            _paySlipRepository.SaveChanges();
+            
+
+            return errorIds;
         }
 
         public IList<PaySlipNonPublicViewModel> GetNonPublic(Guid payPeriodId, Guid positionId)
@@ -542,7 +580,7 @@ namespace EPayroll_BE.Services
         bool Confirm(PaySlipConfirmViewModel model);
         IList<PaySlipPaySalaryErrorViewModel> PaySalary(PaySlipPaySalaryModel model);
         IList<PaySlipViewModel> GetAll(Guid employeeId);
-        void Public(PayslipPublicModel model);
+        IList<Guid> Public(PayslipPublicModel model);
         IList<PaySlipNonPublicViewModel> GetNonPublic(Guid payPeriodId, Guid positionId);
     }
 }

@@ -25,7 +25,8 @@ namespace EPayroll_BE.Services
                 Name = model.Name,
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
-                CreatedDate = DateTime.Now
+                CreatedDate = DateTime.Now,
+                IsDraft = true
             };
 
             _salaryTableRepository.Add(salaryTable);
