@@ -75,7 +75,7 @@ namespace EPayroll_BE.Controllers
             {
                 var result = _payPeriodService.Add(model);
                 if (result == null) return BadRequest("End date of pay period exceeds the end date of the last salary table. Please create a salary table first");
-                return StatusCode(201, _payPeriodService.Add(model));
+                return StatusCode(201, result);
             }
             catch (Exception)
             {
