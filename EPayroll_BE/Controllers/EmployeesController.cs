@@ -140,6 +140,23 @@ namespace EPayroll_BE.Controllers
                 return StatusCode(500, e.Message);
             }
         }
+
+        [HttpPost("logout")]
+        [SwaggerResponse(400, null, Description = "Employee ID is required")]
+        [SwaggerResponse(500, null, Description = "Server error")]
+        public ActionResult Logout([FromQuery]Guid? employeeId = null)
+        {
+            try
+            {
+                if (employeeId == null) return BadRequest("Employee ID is required");
+                _employeeService.Logout(new Guid(employeeId.ToString()));
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
         #endregion
 
         #region Put
