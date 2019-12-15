@@ -39,7 +39,8 @@ namespace EPayroll_BE.Services
                 SalaryModeId = model.SalaryModeId,
                 Email = model.Email,
                 UserUID = model.UserUID,
-                EsapiEmployeeId = model.EsapiEmployeeId
+                EsapiEmployeeId = model.EsapiEmployeeId,
+                StartWorkDate = model.StartWorkDate == null ? DateTime.Now : model.StartWorkDate.GetValueOrDefault()
             };
 
             _employeeRepository.Add(employee);

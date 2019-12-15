@@ -27,6 +27,8 @@ namespace EPayroll_BE.ViewModels
         public double Factor { get; set; }
         [Required]
         public string Condition { get; set; }
+        [Required]
+        public int Year { get; set; }
 
         public Guid SalaryTableId { get; set; }
     }
@@ -40,6 +42,8 @@ namespace EPayroll_BE.ViewModels
         public double Factor { get; set; }
         [Required]
         public string Condition { get; set; }
+        [Required]
+        public int Year { get; set; }
 
         public IList<PayTypeAmountCreateModelV2> PayTypeAmounts { get; set; }
     }
