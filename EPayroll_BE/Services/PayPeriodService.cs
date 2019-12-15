@@ -48,9 +48,9 @@ namespace EPayroll_BE.Services
                 {
                     Id = payPeriod.Id,
                     Name = payPeriod.Name,
-                    StartDate = payPeriod.StartDate,
-                    EndDate = payPeriod.EndDate,
-                    PayDate = payPeriod.PayDate
+                    StartDate = payPeriod.StartDate.ToString("dd-MM-yyyy"),
+                    EndDate = payPeriod.EndDate.ToString("dd-MM-yyyy"),
+                    PayDate = payPeriod.PayDate.ToString("dd-MM-yyyy")
                 };
             }
             return null;
@@ -67,9 +67,9 @@ namespace EPayroll_BE.Services
                 {
                     Id = list[i].Id,
                     Name = list[i].Name,
-                    StartDate = list[i].StartDate,
-                    EndDate = list[i].EndDate,
-                    PayDate = list[i].PayDate
+                    StartDate = list[i].StartDate.ToString("dd-MM-yyyy"),
+                    EndDate = list[i].EndDate.ToString("dd-MM-yyyy"),
+                    PayDate = list[i].PayDate.ToString("dd-MM-yyyy")
                 });
             }
             return result;
