@@ -48,9 +48,9 @@ namespace EPayroll_BE.Controllers
 
         // Get all
         [HttpGet]
-        [SwaggerResponse(200, typeof(IList<EmployeeListViewModel>), Description = "Return all employees")]
-        [SwaggerResponse(500, null, Description = "Server error")]
-        public ActionResult GetAll([FromQuery]Guid? positionId = null)
+        [SwaggerResponse(200, typeof(IList<EmployeeListViewModel>),Description ="Return all employees")]
+       [SwaggerResponse(500, null, Description ="Server error")]
+       public ActionResult GetAll([FromQuery]Guid? positionId = null)
         {
             try
             {

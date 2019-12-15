@@ -16,10 +16,10 @@ namespace EPayroll_BE.Models
         public string Email { get; set; }
         public string UserUID { get; set; }
         public string IdentifyNumber { get; set; }
-        public int EsapiEmployeeId { get; set; }
         public bool IsDeleted { get; set; }
         public string FCMToken { get; set; }
         public DateTime StartWorkDate { get; set; }
+        public int EsapiEmployeeId { get; set; }
 
         public Guid PositionId { get; set; }
         public Guid SalaryModeId { get; set; }

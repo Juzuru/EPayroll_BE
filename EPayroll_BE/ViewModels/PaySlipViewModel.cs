@@ -33,15 +33,16 @@ namespace EPayroll_BE.ViewModels
     }
     public class PaySlipCreateResult
     {
+        public IList<Guid> EmployeeIds { get; set; }
         public Guid PayPeriodId { get; set; }
-        public PositionViewModel Position { get; set; }
     }
+
     public class PaySlipDetailViewModel
     {
         public string PaySlipCode { get; set; }
         public DateTime CreatedDate { get; set; }
         public string Status { get; set; }
-        public float Amount { get; set; }
+        public long Amount { get; set; }
 
         public PayPeriodDetailViewModel PayPeriod { get; set; }
 
