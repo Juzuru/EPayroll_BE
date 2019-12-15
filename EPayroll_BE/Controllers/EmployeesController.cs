@@ -150,6 +150,8 @@ namespace EPayroll_BE.Controllers
             {
                 if (employeeId == null) return BadRequest("Employee ID is required");
                 _employeeService.Logout(new Guid(employeeId.ToString()));
+                Request.Headers.TryGetValue("Authorization", out StringValues value);
+                JWTUtility.RemoveAudien(value.ToString());
                 return Ok();
             }
             catch (Exception e)
