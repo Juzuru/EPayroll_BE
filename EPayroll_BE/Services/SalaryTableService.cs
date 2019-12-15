@@ -14,13 +14,15 @@ namespace EPayroll_BE.Services
         private readonly ISalaryLevelRepository _salaryLevelRepository;
         private readonly IPayTypeAmountRepository _payTypeAmountRepository;
         private readonly IPayTypeRepository _payTypeRepository;
+        private readonly IEmployeeRepository _employeeRepository;
 
-        public SalaryTableService(ISalaryTableRepository salaryTableRepository, ISalaryLevelRepository salaryLevelRepository, IPayTypeAmountRepository payTypeAmountRepository, IPayTypeRepository payTypeRepository)
+        public SalaryTableService(ISalaryTableRepository salaryTableRepository, ISalaryLevelRepository salaryLevelRepository, IPayTypeAmountRepository payTypeAmountRepository, IPayTypeRepository payTypeRepository, IEmployeeRepository employeeRepository)
         {
             _salaryTableRepository = salaryTableRepository;
             _salaryLevelRepository = salaryLevelRepository;
             _payTypeAmountRepository = payTypeAmountRepository;
             _payTypeRepository = payTypeRepository;
+            _employeeRepository = employeeRepository;
         }
 
         public Guid Add(SalaryTableCreateModel model)
@@ -77,6 +79,7 @@ namespace EPayroll_BE.Services
                         salaryLevel.Factor = model.SalaryLevels[i].Factor;
                         salaryLevel.Level = model.SalaryLevels[i].Level;
                         salaryLevel.Order = i + 1;
+                        salaryLevel.Year = model.SalaryLevels[i].Year;
 
                         _salaryLevelRepository.Update(salaryLevel);
                     }
@@ -88,7 +91,8 @@ namespace EPayroll_BE.Services
                             Factor = model.SalaryLevels[i].Factor,
                             Level = model.SalaryLevels[i].Level,
                             Order = i + 1,
-                            SalaryTableId = model.Id
+                            SalaryTableId = model.Id,
+                            Year = model.SalaryLevels[i].Year
                         };
                         _salaryLevelRepository.Add(salaryLevel);
                     }
@@ -148,9 +152,40 @@ namespace EPayroll_BE.Services
         {
             for (int i = 0; i < salaryTableIds.Length; i++)
             {
-                var salaryTable = _salaryTableRepository.Get(_ => _.Id.Equals(salaryTableIds[i])).FirstOrDefault();
+                var salaryTable = _salaryTableRepository
+                    .Get(_ => _.Id.Equals(salaryTableIds[i]))
+                    .FirstOrDefault();
+                var lastSalaryTable = _salaryTableRepository
+                    .Get(_ => _.IsEnable == true && _.PositionId.Equals(salaryTable.PositionId))
+                    .FirstOrDefault();
+                if (lastSalaryTable != null)
+                {
+                    lastSalaryTable.IsEnable = false;
+                    _salaryTableRepository.Update(lastSalaryTable);
+                }
                 salaryTable.IsEnable = true;
                 _salaryTableRepository.Update(salaryTable);
+
+                var employees = _employeeRepository.Get(_ => _.PositionId.Equals(salaryTable.PositionId));
+                var salaryLevels = _salaryLevelRepository.Get(_ => _.SalaryTableId.Equals(salaryTable.Id));
+                int year;
+                for (int j = 0; j < employees.Count; j++)
+                {
+                    DateTime now = DateTime.Now;
+                    year = now.Year - employees[j].StartWorkDate.Year;
+                    if (employees[j].StartWorkDate.AddYears(year) > now)
+                        year--;
+
+                    for (int k = 0; k < salaryLevels.Count; k++)
+                    {
+                        if (year == salaryLevels[k].Year)
+                        {
+                            employees[j].SalaryLevelId = salaryLevels[k].Id;
+                            _employeeRepository.Update(employees[j]);
+                            break;
+                        }
+                    }
+                }
             }
 
             _salaryTableRepository.SaveChanges();

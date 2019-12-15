@@ -13,6 +13,7 @@ namespace EPayroll_BE.Models
         public int Order { get; set; }
         public double Factor { get; set; }
         public string Condition { get; set; }
+        public int Year { get; set; }
 
         public Guid SalaryTableId { get; set; }
 

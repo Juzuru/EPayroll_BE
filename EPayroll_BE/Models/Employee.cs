@@ -19,6 +19,7 @@ namespace EPayroll_BE.Models
         public int EsapiEmployeeId { get; set; }
         public bool IsDeleted { get; set; }
         public string FCMToken { get; set; }
+        public DateTime StartWorkDate { get; set; }
 
         public Guid PositionId { get; set; }
         public Guid SalaryModeId { get; set; }

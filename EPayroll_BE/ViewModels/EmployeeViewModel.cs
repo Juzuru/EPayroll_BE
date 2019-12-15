@@ -54,6 +54,8 @@ namespace EPayroll_BE.ViewModels
         public string UserUID { get; set; }
         [Required]
         public int EsapiEmployeeId { get; set; }
+        [Required]
+        public DateTime? StartWorkDate { get; set; }
 
         public Guid PositionId { get; set; }
         public Guid SalaryModeId { get; set; }
