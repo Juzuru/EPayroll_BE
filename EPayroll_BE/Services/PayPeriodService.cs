@@ -58,7 +58,7 @@ namespace EPayroll_BE.Services
         {
             IList<PayPeriod> list = _payPeriodRepository.GetAll()
                 .OrderByDescending(_payPeriod => _payPeriod.StartDate)
-                .Reverse().ToList();
+                .ToList();
             IList<PayPeriodDetailViewModel> result = new List<PayPeriodDetailViewModel>();
             for (int i = 0; i < list.Count; i++)
             {
