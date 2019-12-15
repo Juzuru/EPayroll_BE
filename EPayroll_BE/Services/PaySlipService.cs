@@ -281,7 +281,7 @@ namespace EPayroll_BE.Services
         public IList<PaySlipViewModel> GetAll(Guid employeeId)
         {
             IList<PaySlip> list = _paySlipRepository
-                .Get(_playSlip => _playSlip.EmployeeId.Equals(employeeId))
+                .Get(_playSlip => _playSlip.EmployeeId.Equals(employeeId) && _playSlip.IsPublic == true)
                 .OrderByDescending(_paySlip => _paySlip.CreatedDate)
                 .ToList();
 
