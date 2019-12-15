@@ -206,7 +206,7 @@ namespace EPayroll_BE.Services
                                 }
                             }
 
-                            paySlip.Status = "Unpaid";
+                            paySlip.Status = "Waiting";
                             paySlip.Amount = totalAmount;
 
                             _paySlipRepository.Update(paySlip);
