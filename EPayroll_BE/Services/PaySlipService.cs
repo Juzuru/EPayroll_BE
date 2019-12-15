@@ -362,9 +362,9 @@ namespace EPayroll_BE.Services
                     {
                         Id = payPeriod.Id,
                         Name = payPeriod.Name,
-                        StartDate = payPeriod.StartDate,
-                        EndDate = payPeriod.EndDate,
-                        PayDate = payPeriod.PayDate,
+                        StartDate = payPeriod.StartDate.ToString("dd-MM-yyyy"),
+                        EndDate = payPeriod.EndDate.ToString("dd-MM-yyyy"),
+                        PayDate = payPeriod.PayDate.ToString("dd-MM-yyyy")
                     },
                     GroupPayItems = groupPayItemViewModels
                 };
@@ -400,12 +400,15 @@ namespace EPayroll_BE.Services
                 {
                     if (payslips[i].EmployeeId.Equals(model.EmployeeIds[j]))
                     {
-                        try
+                        string fcmToken = _employeeRepository.Get(_ => _.Id.Equals(payslips[i].EmployeeId)).FirstOrDefault().FCMToken;
+                        if (!string.IsNullOrEmpty(fcmToken))
                         {
-                            payslips[i].IsPublic = true;
-                            _paySlipRepository.SaveChanges();
+                            try
+                            {
+                                payslips[i].IsPublic = true;
+                                _paySlipRepository.SaveChanges();
 
-                            _firebaseCloudMessagingService.SendNotification(new Dictionary<string, object>
+                                _firebaseCloudMessagingService.SendNotification(new Dictionary<string, object>
                             {
                                 { "collapse_key", "PaySlip" },
                                 { "title", "Phiếu lương" },
@@ -414,7 +417,7 @@ namespace EPayroll_BE.Services
                                         { "paySlipId", payslips[i].Id }
                                     }
                                 },
-                                { "to", _employeeRepository.Get(_ => _.Id.Equals(payslips[i].EmployeeId)).FirstOrDefault().FCMToken },
+                                { "to", fcmToken },
                                 { "delay_while_idle", true },
                                 //androidMessageDic.Add("time_to_live", 125);
                                 { "notification", new Dictionary<string, string>
@@ -422,18 +425,19 @@ namespace EPayroll_BE.Services
                                         { "title", "Phiếu Lương"},
                                         { "subtitle", "subtitle"},
                                         { "body", "Phiếu lương mới cho kì lương " + payPeriod.Name.ToLower()}
-                                    } 
+                                    }
                                 },
                                 { "dry_run", false }
                             });
 
-                            break;
-                        }
-                        catch (Exception e)
-                        {
-                            payslips[i].IsPublic = false;
-                            _paySlipRepository.SaveChanges();
-                            errorIds.Add(payslips[i].Id);
+                                break;
+                            }
+                            catch (Exception e)
+                            {
+                                payslips[i].IsPublic = false;
+                                _paySlipRepository.SaveChanges();
+                                errorIds.Add(payslips[i].Id);
+                            }
                         }
                     }
                 }
