@@ -160,7 +160,9 @@ namespace EPayroll_BE.Services
                     {
                         Id = salaryMode.Id,
                         Mode = salaryMode.Mode
-                    }
+                    },
+                    Email = employee.Email,
+                    UserUID = employee.UserUID
                 };
             }
             return null;
