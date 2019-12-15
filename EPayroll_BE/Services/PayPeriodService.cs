@@ -23,7 +23,8 @@ namespace EPayroll_BE.Services
         {
             SalaryTable salaryTable = _salaryTableRepository.GetAll().OrderByDescending(_ => _.EndDate).FirstOrDefault();
 
-            if (salaryTable.EndDate.Date < model.EndDate.Date) return null;
+            if (salaryTable.EndDate.Date < model.EndDate.Date || salaryTable.StartDate.Date > model.StartDate.Date)
+                return null;
 
             PayPeriod payPeriod = new PayPeriod
             {
