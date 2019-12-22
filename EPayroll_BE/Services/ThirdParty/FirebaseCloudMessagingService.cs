@@ -9,7 +9,7 @@ namespace EPayroll_BE.Services.ThirdParty
 {
     public class FirebaseCloudMessagingService : IFirebaseCloudMessagingService
     {
-        private readonly string firebaseCloudMessagingKey = "AIzaSyB91JWspHypNVmpZCRPTdUii9os8qEjG4w";
+        private readonly string firebaseCloudMessagingKey = "";// The Legacy Key Server from FirebaseCloudMessaging
         private readonly string firebaseCloudMessagingUri = "https://fcm.googleapis.com/fcm/send";
 
         public void SendNotification(Dictionary<string, object> notification)
