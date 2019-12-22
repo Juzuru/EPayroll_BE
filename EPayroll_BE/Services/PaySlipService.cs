@@ -400,8 +400,8 @@ namespace EPayroll_BE.Services
                 {
                     if (payslips[i].EmployeeId.Equals(model.EmployeeIds[j]))
                     {
-                        string fcmToken = _employeeRepository.Get(_ => _.Id.Equals(payslips[i].EmployeeId)).FirstOrDefault().FCMToken;
-                        if (!string.IsNullOrEmpty(fcmToken))
+                        var employee = _employeeRepository.Get(_ => _.Id.Equals(payslips[i].EmployeeId)).FirstOrDefault();
+                        if (!string.IsNullOrEmpty(employee.FCMToken))
                         {
                             try
                             {
@@ -414,10 +414,11 @@ namespace EPayroll_BE.Services
                                 { "title", "Phiếu lương" },
                                 { "data", new Dictionary<string, Guid>
                                     {
-                                        { "paySlipId", payslips[i].Id }
+                                        { "paySlipId", payslips[i].Id },
+                                        { "employeeId", employee.Id}
                                     }
                                 },
-                                { "to", fcmToken },
+                                { "to", employee.FCMToken },
                                 { "delay_while_idle", true },
                                 //androidMessageDic.Add("time_to_live", 125);
                                 { "notification", new Dictionary<string, string>
